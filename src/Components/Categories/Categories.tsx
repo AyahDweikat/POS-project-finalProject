@@ -11,6 +11,7 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { IconButton } from "@mui/material";
+import { Formik } from "formik";
 
 // export const categoryObj = [
 //   "Bakery and Bread",
@@ -68,7 +69,59 @@ export default function Categories() {
     })
     setCategories(_cateogries)
   }
+  const addCategory = (cat:string)=>{
+    if(!categories.includes(cat)){
+      const newCat : string []= [...categories, cat];
+      setCategories(newCat)
+    }
+  }
+
+
   return (
+    <>
+    <div>
+     <Formik
+       initialValues={{ category: ''}}
+       validate={values => {
+         const errors = {category:""};
+         if (!values.category) {
+           errors.category = 'Required';
+         }
+         return errors;
+       }}
+       onSubmit={(values, { setSubmitting }) => {
+         setTimeout(() => {
+           alert(JSON.stringify(values, null, 2));
+           setSubmitting(false);
+         }, 400);
+       }}
+     >
+       {({
+         values,
+         errors,
+         touched,
+         handleChange,
+         handleBlur,
+         handleSubmit,
+         isSubmitting,
+         /* and other goodies */
+       }) => (
+         <form onSubmit={()=>handleSubmit()}>
+           <input
+             type="category"
+             name="category"
+             onChange={handleChange}
+             onBlur={handleBlur}
+             value={values.category}
+           />
+           {errors.category && touched.category && errors.category}
+           <button type="submit" disabled={isSubmitting}>
+             Submit
+           </button>
+         </form>
+       )}
+     </Formik>
+   </div>
     <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
       <List sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
         {categories.map((cat, idx) => {
@@ -93,5 +146,6 @@ export default function Categories() {
         })}
       </List>
     </Box>
+    </>
   );
 }
