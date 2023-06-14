@@ -1,4 +1,4 @@
-const products= [
+export const products= [
     {
         name:"bag",
         code:"123456",
@@ -73,5 +73,3 @@ const products= [
     }
 ]
 
-
-export default products;
