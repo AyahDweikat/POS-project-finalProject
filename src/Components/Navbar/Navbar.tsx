@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+// import AdbIcon from '@mui/icons-material/Adb';
 import {Form} from 'react-router-dom'
 const pages = ['Products', 'Categories', 'Units'];
 const settings = ['Profile', 'Logout'];
@@ -93,7 +93,7 @@ function Navbar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
             variant="h5"
             noWrap
@@ -110,7 +110,7 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            POS
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
