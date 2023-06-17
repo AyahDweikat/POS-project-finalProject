@@ -48,7 +48,7 @@ interface categoryObj {
 export default function Categories() {
   const navigate= useNavigate()
   const location = useLocation()
-  const [isEditting, setIsEditting] = useState(false)
+  const [isEditting, setIsEditting] = useState<boolean>(false)
   const [categories, setCategories] = useState<categoryObj[]>([
     {_id:nanoid(), cat:"bakery"},
     {_id:nanoid(), cat:"bread"},
@@ -112,7 +112,7 @@ export default function Categories() {
   }
   return (
     <>
-      <Box sx={{ mt: 10, border:"1px solid grey",borderRadius:"8px" , width:'40%', mx:"auto", py:"20px"  }}>
+      <Box sx={{ mt: 10, border:"1px solid grey",borderRadius:"8px" , width:'60%', mx:"auto", py:"20px"  }}>
         <Typography variant="h6" component="h6" sx={{pb:"10px"}}>
           Add Category Form
         </Typography>
