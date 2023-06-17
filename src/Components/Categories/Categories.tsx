@@ -87,7 +87,7 @@ export default function Categories() {
       return;
     }
     if (!categories.find(item=> item.cat === newCat)) {
-      const newCategoryArr: categoryObj[] = [...categories,{_id:nanoid(), cat:newCat}];
+      const newCategoryArr: categoryObj[] = [{_id:nanoid(), cat:newCat},...categories];
         setCategories(newCategoryArr);
         navigate(location.pathname);
     }
