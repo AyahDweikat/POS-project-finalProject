@@ -151,7 +151,7 @@ export default function Categories() {
             handleChange,
             handleBlur,
             handleSubmit,
-            isSubmitting,
+            // isSubmitting,
             /* and other goodies */
           }) => (
             <form
