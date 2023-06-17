@@ -47,19 +47,22 @@ function createData(
 // });
 export default function Units() {
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const navigate= useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
   const [units, setUnits] = useState<unitObj[]>([
     createData(nanoid(), "Kilogram", "Kilogram", 1),
     createData(nanoid(), "Gram", "Kilogram", 1000),
     createData(nanoid(), "Pound", "Kilogram", 2.20462),
     createData(nanoid(), "Ounce", "Kilogram", 35.2739199982575),
   ]);
-  const addUnitRow = (valuesFromInputs:InputsObj) =>{
-    const newUnitArr: unitObj[] = [{_id:nanoid(), ...valuesFromInputs},...units];
+  const addUnitRow = (valuesFromInputs: InputsObj) => {
+    const newUnitArr: unitObj[] = [
+      { _id: nanoid(), ...valuesFromInputs },
+      ...units,
+    ];
     setUnits(newUnitArr);
     navigate(location.pathname);
-  }
+  };
   const updateUnitCells = (idx: string, newText: string, key: string) => {
     // const updatedUnit:(unitObj|undefined) =units.find(item=> item._id === idx)
     // if (updatedUnit && updatedUnit?[key] == newText) {
@@ -93,7 +96,8 @@ export default function Units() {
           mt: 10,
           border: "1px solid grey",
           borderRadius: "8px",
-          width: "70%",
+          width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
+          maxWidth: "665px",
           mx: "auto",
           py: "20px",
         }}
@@ -102,17 +106,21 @@ export default function Units() {
           Add Units of Measure Form
         </Typography>
         <Formik
-          initialValues={{ unitMeasure:"", baseUnit:"", conversionFactor:0 }}
+          initialValues={{ unitMeasure: "", baseUnit: "", conversionFactor: 0 }}
           validate={(values) => {
-            const errors = { unitMeasure:"", baseUnit:"", conversionFactor:""  };
+            const errors = {
+              unitMeasure: "",
+              baseUnit: "",
+              conversionFactor: "",
+            };
             if (!values.unitMeasure) {
               errors.unitMeasure = "Required";
             }
             if (!values.baseUnit) {
-              errors.baseUnit ="Required";
+              errors.baseUnit = "Required";
             }
             if (!values.conversionFactor) {
-              errors.conversionFactor ="Required";
+              errors.conversionFactor = "Required";
             }
             return errors;
           }}
@@ -133,17 +141,22 @@ export default function Units() {
             isSubmitting,
             /* and other goodies */
           }) => (
-            <form onSubmit={(e) =>{
-              e.preventDefault()
-              handleSubmit()
-              addUnitRow(values)
-              values.unitMeasure="";
-              values.baseUnit="";
-              values.conversionFactor=0;
-            }}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+                addUnitRow(values);
+                values.unitMeasure = "";
+                values.baseUnit = "";
+                values.conversionFactor = 0;
+              }}
             >
               <TextField
                 id="unitMeasureInput"
+                sx={{
+                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  maxWidth: "400px",
+                }}
                 label="Measure of Unit"
                 variant="outlined"
                 type="unitMeasure"
@@ -152,11 +165,21 @@ export default function Units() {
                 onBlur={handleBlur}
                 value={values.unitMeasure}
               />
-              <Typography variant="body1" component="p" sx={{pb:"10px", fontSize:"12px", color:"red"}}>
-                {errors.unitMeasure && touched.unitMeasure && errors.unitMeasure}
+              <Typography
+                variant="body1"
+                component="p"
+                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
+              >
+                {errors.unitMeasure &&
+                  touched.unitMeasure &&
+                  errors.unitMeasure}
               </Typography>
               <TextField
                 id="baseUnitInput"
+                sx={{
+                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  maxWidth: "400px",
+                }}
                 label="Base Unit"
                 variant="outlined"
                 type="baseUnit"
@@ -165,11 +188,19 @@ export default function Units() {
                 onBlur={handleBlur}
                 value={values.baseUnit}
               />
-              <Typography variant="body1" component="p" sx={{pb:"10px", fontSize:"12px", color:"red"}}>
-                {errors.baseUnit && touched.baseUnit && errors.baseUnit }
+              <Typography
+                variant="body1"
+                component="p"
+                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
+              >
+                {errors.baseUnit && touched.baseUnit && errors.baseUnit}
               </Typography>
               <TextField
                 id="conversionFactorInput"
+                sx={{
+                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  maxWidth: "400px",
+                }}
                 label="Conversion Factor"
                 variant="outlined"
                 type="number"
@@ -177,11 +208,28 @@ export default function Units() {
                 name="conversionFactor"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                />
-              <Typography variant="body1" component="p" sx={{pb:"10px", fontSize:"12px", color:"red"}}>
-                {errors.conversionFactor && touched.conversionFactor && errors.conversionFactor}
+              />
+              <Typography
+                variant="body1"
+                component="p"
+                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
+              >
+                {errors.conversionFactor &&
+                  touched.conversionFactor &&
+                  errors.conversionFactor}
               </Typography>
-              <Button type="submit" variant="outlined" disabled={!values.unitMeasure.length || !values.baseUnit.length || !values.conversionFactor}>Add</Button>
+              <Button
+                type="submit"
+                sx={{width:"80%", maxWidth:"120px"}}
+                variant="outlined"
+                disabled={
+                  !values.unitMeasure.length ||
+                  !values.baseUnit.length ||
+                  !values.conversionFactor
+                }
+              >
+                Add
+              </Button>
             </form>
           )}
         </Formik>
