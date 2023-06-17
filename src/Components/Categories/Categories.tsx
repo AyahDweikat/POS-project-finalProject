@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {useState} from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -41,7 +42,7 @@ import { nanoid } from 'nanoid'
 //   "Drinks",
 // ];
 interface categoryObj {
-  id:string;
+  _id:string;
   cat:string;
 }
 export default function Categories() {
@@ -49,33 +50,33 @@ export default function Categories() {
   const location = useLocation()
   const [isEditting, setIsEditting] = useState(false)
   const [categories, setCategories] = useState<categoryObj[]>([
-    {id:"1", cat:"bakery"},
-    {id:"2", cat:"bread"},
-    {id:"3", cat:"meat"},
-    {id:"4", cat:"salad dressings"},
-    {id:"5", cat:"Condiments"},
-    {id:"6", cat:"breakfast foods"},
-    {id:"7", cat:"soups"},
-    {id:"8", cat: "sauces"},
-    {id:"9", cat:"oils"},
-    {id:"10", cat:"canned goods"},
-    {id:"11", cat:"rice"},
-    {id:"12", cat:"pasta"},
-    {id:"13", cat:"seafood"},
-    {id:"14", cat:"cereals"},
-    {id:"15", cat:"frozen foods"},
-    {id:"16", cat:"dairy"},
-    {id:"17", cat:"cheese"},
-    {id:"18", cat:"eggs"},
-    {id:"19", cat:"snacks"},
-    {id:"20", cat:"crackers"},
-    {id:"21", cat:"fruits"},
-    {id:"22", cat:"vegetables"},
-    {id:"23", cat:"drinks"},
+    {_id:nanoid(), cat:"bakery"},
+    {_id:nanoid(), cat:"bread"},
+    {_id:nanoid(), cat:"meat"},
+    {_id:nanoid(), cat:"salad dressings"},
+    {_id:nanoid(), cat:"Condiments"},
+    {_id:nanoid(), cat:"breakfast foods"},
+    {_id:nanoid(), cat:"soups"},
+    {_id:nanoid(), cat: "sauces"},
+    {_id:nanoid(), cat:"oils"},
+    {_id:nanoid(), cat:"canned goods"},
+    {_id:nanoid(), cat:"rice"},
+    {_id:nanoid(), cat:"pasta"},
+    {_id:nanoid(), cat:"seafood"},
+    {_id:nanoid(), cat:"cereals"},
+    {_id:nanoid(), cat:"frozen foods"},
+    {_id:nanoid(), cat:"dairy"},
+    {_id:nanoid(), cat:"cheese"},
+    {_id:nanoid(), cat:"eggs"},
+    {_id:nanoid(), cat:"snacks"},
+    {_id:nanoid(), cat:"crackers"},
+    {_id:nanoid(), cat:"fruits"},
+    {_id:nanoid(), cat:"vegetables"},
+    {_id:nanoid(), cat:"drinks"},
   ]);
   const deleteCategory = (idx:string) => {
     const newCategoryArray:categoryObj[] = categories.filter(item => {
-      if(item.id !== idx){
+      if(item._id !== idx){
         return item;
       }
     })
@@ -86,13 +87,13 @@ export default function Categories() {
       return;
     }
     if (!categories.find(item=> item.cat === newCat)) {
-      const newCategoryArr: categoryObj[] = [...categories,{id:nanoid(), cat:newCat}];
+      const newCategoryArr: categoryObj[] = [...categories,{_id:nanoid(), cat:newCat}];
         setCategories(newCategoryArr);
         navigate(location.pathname);
     }
   };
   const updateCategory = (idx:string, newCat:string)=>{
-    const updatedCat =categories.find(item=> item.id === idx)
+    const updatedCat =categories.find(item=> item._id === idx)
     if (updatedCat && updatedCat.cat== newCat) {
       return;
     }
@@ -100,7 +101,7 @@ export default function Categories() {
       return;
     }
     const newCategoryArr: categoryObj[] = categories.map(item => {
-      if(item.id !== idx){
+      if(item._id !== idx){
         return item;
       }
       else{
@@ -122,7 +123,6 @@ export default function Categories() {
             if (!values.category) {
               errors.category = "Required";
             }
-            // setSubmitting(true);
             return errors;
           }}
           onSubmit={(values, { setSubmitting }) => {
@@ -181,12 +181,12 @@ export default function Categories() {
           {categories.map((category) => {
             return (
               <ListItem
-                key={category.id}
+                key={category._id}
                 sx={{backgroundColor:"#eee5e5", m:"10px"}}
                 secondaryAction={
                   <IconButton
                     aria-label="delete"
-                    onClick={() => deleteCategory(category.id)}
+                    onClick={() => deleteCategory(category._id)}
                   >
                     <DeleteForeverRoundedIcon />
                   </IconButton>
@@ -200,7 +200,7 @@ export default function Categories() {
                   suppressContentEditableWarning={true}
                   onClick={()=>setIsEditting(true)}
                   onBlur={(e)=>{
-                    updateCategory(category.id, e.target.innerText)
+                    updateCategory(category._id, e.target.innerText)
                     setIsEditting(false)
                   }}
                   sx={{textTransform:"capitalize", outline:"none", borderBottom:isEditting? "1px solid grey":"0px"}}
