@@ -182,7 +182,7 @@ export default function Categories() {
               </Typography>
               <Button
                 type="submit"
-                sx={{width:"80%", maxWidth:"120px"}}
+                sx={{width:"80%", maxWidth:"140px"}}
                 variant="outlined"
                 disabled={!values.category.length}
               >

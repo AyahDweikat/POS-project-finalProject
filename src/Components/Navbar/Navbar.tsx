@@ -56,7 +56,6 @@ function Navbar() {
           >
             POS
           </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -87,9 +86,15 @@ function Navbar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
+                <Form action={`${page}`} key={page}>
+                    <Button
+                      type="submit"
+                      onClick={handleCloseNavMenu}
+                      sx={{ p: 2, color: 'black', display: 'block', width:"100%" }}
+                      >
+                      {page}
+                    </Button>
+                </Form>
               ))}
             </Menu>
           </Box>

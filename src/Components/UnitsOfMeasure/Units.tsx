@@ -220,7 +220,7 @@ export default function Units() {
               </Typography>
               <Button
                 type="submit"
-                sx={{width:"80%", maxWidth:"120px"}}
+                sx={{width:"80%", maxWidth:"140px"}}
                 variant="outlined"
                 disabled={
                   !values.unitMeasure.length ||
