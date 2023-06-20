@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './Components/ErrorPage.tsx';
@@ -8,11 +7,14 @@ import Carts from './Components/Carts/Carts.tsx';
 import Products from './Components/Products/Products.tsx';
 import Categories from './Components/Categories/Categories.tsx';
 import Units from './Components/UnitsOfMeasure/Units.tsx';
+import Signup from './Components/Signup/Signup.tsx';
+import Login from './Components/Login/Login.tsx';
+import Layout from './Components/Layout/Layout.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Layout /> ,
     errorElement: <ErrorPage />,
     // loader: rootLoader,
     // action: rootAction,
@@ -37,6 +39,14 @@ const router = createBrowserRouter([
             path: "units",
             element: <Units />,
           },
+          {
+            path: "signup",
+            element: <Signup />,
+          },
+          {
+            path: "login",
+            element: <Login />,
+          },
         ],
       },
     ],
@@ -48,6 +58,5 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-    {/* <App /> */}
   </React.StrictMode>,
 )
