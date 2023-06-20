@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { GlobalContext } from "../../Context/context.tsx";
 
-// interface authObj {
+// interface Auth {
 //   user: string;
 //   token: string;
 //   setToken:void;
 //   setUser:void;
-//   // signout:void;
+//   signout:void;
 // }
-interface loginObj {
+interface LoginObj {
   email: string;
   password: string;
 }
@@ -20,15 +20,15 @@ interface loginObj {
 function Login() {
   const navigate = useNavigate();
   const {auth} = useContext(GlobalContext);
-  const handleSignup = async (values: loginObj) => {
+  const handleLogin = async (values: LoginObj) => {
     const results = await fetchApi(
       "POST",
       values,
       `https://posapp.onrender.com/auth/signin`
     );
     if (results.message == "user is found") {
-      auth?.setToken(results.token)
       localStorage.setItem("token", results.token);
+      auth.setToken(results.token)
       navigate('/Carts');
     }
   };
@@ -74,7 +74,7 @@ function Login() {
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-              handleSignup(values);
+              handleLogin(values);
               values.email = "";
               values.password = "";
             }}

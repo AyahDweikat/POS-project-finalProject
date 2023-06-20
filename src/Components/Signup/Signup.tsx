@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { fetchApi } from "./../fetchApi.ts";
 import { useNavigate } from "react-router-dom";
 
-interface signUpObj {
+interface SignUpObj {
   userName: string;
   email: string;
   password: string;
@@ -13,7 +13,7 @@ interface signUpObj {
 function Signup() {
   const navigate = useNavigate();
 
-  const handleSignup = async (values: signUpObj) => {
+  const handleSignup = async (values: SignUpObj) => {
     const results = await fetchApi(
       "POST",
       values,

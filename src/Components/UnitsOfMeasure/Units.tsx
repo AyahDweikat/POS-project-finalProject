@@ -15,7 +15,7 @@ import Box from "@mui/material/Box";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 
-type unitObj = {
+type UnitObj = {
   _id: string;
   unitOfMeasure: string;
   baseUnit: string;
@@ -30,7 +30,7 @@ interface InputsObj {
 
 export default function Units() {
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const [units, setUnits] = useState<unitObj[]>([]);
+  const [units, setUnits] = useState<UnitObj[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
   const _token: string | null = localStorage.getItem("token");
@@ -68,7 +68,7 @@ export default function Units() {
     }
   };
   const updateUnitCells = async(idx: string, newText: (string|number), key: string) => {
-    const updatedUnit:(unitObj|undefined)=units.find(item=> item._id === idx)
+    const updatedUnit:(UnitObj|undefined)=units.find(item=> item._id === idx)
     if(!updatedUnit){
       throw new Error("Unit is not found")
     }

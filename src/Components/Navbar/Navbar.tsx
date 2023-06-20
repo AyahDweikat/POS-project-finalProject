@@ -21,7 +21,7 @@ const settings = ['Profile', 'Logout'];
 
 function Navbar() {
   const { auth } = useContext(GlobalContext)
-  const pages = auth?.token.length ? ['Carts', 'Products', 'Categories', 'Units'] :['Signup', 'login'] 
+  const pages = auth?.token ? ['Carts', 'Products', 'Categories', 'Units'] :['Signup', 'login'] 
   const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -159,13 +159,16 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <Form action={`${setting}`} key={setting}>
+                <Form  key={setting}>
                 <Button
-                  type="submit"
+                  // type="submit"
                   onClick={()=>{
                     handleCloseNavMenu()
-                    if(setting == "logout"){
-                      localStorage.removeItem("token");
+                    if(setting == "Logout"){
+                      console.log(setting)
+                      navigate('/login')
+                      auth.signout()
+                      localStorage.clear();
                     } else {
                       navigate('/profile')
                     }

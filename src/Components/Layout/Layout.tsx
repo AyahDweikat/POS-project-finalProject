@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { GlobalContext } from './../../Context/context.tsx';
-import App from "../../App.tsx";
 
 // const cat = localStorage.getItem("myCat");
 // localStorage.removeItem("myCat");
-function Layout() {
+function Layout({ children }:{children: React.ReactNode}) {
   const [user, setUser] = useState<string>("");
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState<string>("");
   useEffect(()=>{
     const _token:(string|null) = localStorage.getItem("token");
     setToken(_token||"")
@@ -16,16 +15,16 @@ function Layout() {
     token,
     setToken,
     setUser,
-    // signout: () => {
-    //   setUser("");
-    //   setToken("");
-    // },
+    signout: () => {
+      setUser("");
+      setToken("");
+    },
   };
 
   return (
     <div>
       <GlobalContext.Provider value={{ auth }}>
-        <App/>
+        {children}
       </GlobalContext.Provider>
     </div>
   );

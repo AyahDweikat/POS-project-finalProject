@@ -22,17 +22,17 @@ import {
 // import { useContext } from 'react';
 // import { GlobalContext } from "../../Context/context.tsx";
 
-interface categoryObj {
+interface CategoryObj {
   _id: string;
   category: string;
 }
-interface category {
+interface Category {
   category: string;
 }
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [categories, setCategories] = useState<categoryObj[]>([]);
+  const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [isEditting, setIsEditting] = useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token");
 
@@ -69,7 +69,7 @@ export default function Categories() {
       return;
     }
     if (!categories.find((item) => item.category === newCat)) {
-      const newCategory: category = { category: newCat };
+      const newCategory: Category = { category: newCat };
       const results = await fetchApiWithAuthAndBody(
         "POST",
         newCategory,
@@ -92,7 +92,7 @@ export default function Categories() {
     if (categories.find((item) => item.category === newCat)) {
       return;
     }
-    const newCategory: category = { category: newCat };
+    const newCategory: Category = { category: newCat };
     const results = await fetchApiWithAuthAndBody(
       "PATCH",
       newCategory,

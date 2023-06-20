@@ -13,11 +13,12 @@ import Layout from './Components/Layout/Layout.tsx';
 import IsAuth from './Components/IsAuth/IsAuth.tsx';
 import RequireAuth from './Components/RequireAuth/RequireAuth.tsx';
 import Profile from './Components/Profile/Profile.tsx';
+import App from './App.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout /> ,
+    element: <Layout><App/></Layout> ,
     errorElement: <ErrorPage />,
     // loader: rootLoader,
     // action: rootAction,
@@ -25,34 +26,34 @@ const router = createBrowserRouter([
       {
         errorElement:<ErrorPage />,
         children: [
-          {index:true, element:<RequireAuth><Carts /></RequireAuth> },
+          {index:true, element:<RequireAuth><Carts/></RequireAuth> },
           {
             path: "carts",
-            element: <RequireAuth><Carts /></RequireAuth>,
+            element: <RequireAuth><Carts/></RequireAuth>,
           },
           {
             path: "products",
-            element:<RequireAuth><Products /></RequireAuth>,
+            element:<RequireAuth><Products/></RequireAuth>,
           },
           {
             path: "categories",
-            element: <RequireAuth><Categories /></RequireAuth>,
+            element: <RequireAuth><Categories/></RequireAuth>,
           },
           {
             path: "units",
-            element: <RequireAuth><Units /></RequireAuth> ,
+            element: <RequireAuth><Units/></RequireAuth> ,
           },
           {
             path: "profile",
-            element: <RequireAuth><Profile /></RequireAuth> ,
+            element: <RequireAuth><Profile/></RequireAuth> ,
           },
           {
             path: "signup",
-            element: <IsAuth><Signup /></IsAuth>,
+            element: <IsAuth><Signup/></IsAuth>,
           },
           {
             path: "login",
-            element: <IsAuth><Login /></IsAuth>,
+            element: <IsAuth><Login/></IsAuth>,
           },
         ],
       },

@@ -1,15 +1,15 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { GlobalContext } from '../../Context/context.tsx';
-import { useContext } from "react";
+// import { GlobalContext } from '../../Context/context.tsx';
+// import { useContext } from "react";
 
-function IsAuth(props:any) {
+function IsAuth({ children }:{children: React.ReactNode}) {
     const locate = useLocation().pathname;
-    const { auth } = useContext(GlobalContext)
+    const _token:(string|null) = localStorage.getItem("token");
     return (
       <div>
-        {auth?.token.length ?
+        {_token ?
         <Navigate to={locate}/>:
-        props.children}
+        children}
       </div>
     )
   }

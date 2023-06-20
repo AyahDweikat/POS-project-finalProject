@@ -1,11 +1,9 @@
-import { Navigate, useLocation } from "react-router-dom";
-import { GlobalContext } from "../../Context/context.tsx";
-import { useContext } from "react";
+import { Navigate } from "react-router-dom";
 
-function RequireAuth({ children }) {
-  const { auth } = useContext(GlobalContext);
+function RequireAuth({ children }:{children: React.ReactNode}) {
+  const _token:(string|null) = localStorage.getItem("token");
   return (
-    <div>{auth?.token.length ? children: <Navigate to={'/login'} /> }</div>
+    <div>{_token ? children: <Navigate to={'/login'} /> }</div>
   );
 }
 

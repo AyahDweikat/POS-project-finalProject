@@ -18,7 +18,7 @@ export default interface IFile {
   url: string;
   name: string;
 }
-interface productObj {
+interface ProductObj {
   _id: string;
   name: string;
   code: string;
@@ -27,7 +27,7 @@ interface productObj {
   price: number;
   unitOfMeasure: string;
 }
-interface productInputObj {
+interface ProductInputObj {
   name: string;
   code: string;
   category: string;
@@ -37,7 +37,7 @@ interface productInputObj {
 }
 export default function Proucts() {
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const [products, setProducts] = useState<productObj[]>([
+  const [products, setProducts] = useState<ProductObj[]>([
     {
       _id: "nhggkkjkjj",
       name: "Akai Shuichi",
@@ -67,7 +67,7 @@ export default function Proucts() {
     console.log(selectedFiles)
   }
 
-  const addProduct = (value: productInputObj) => {
+  const addProduct = (value: ProductInputObj) => {
     // let obj ={...value, image:file,}
     console.log({...value});
   };
@@ -78,7 +78,7 @@ export default function Proucts() {
     } else {
       _newText = newText;
     }
-    const newProductsArr: productObj[] = products.map((item) => {
+    const newProductsArr: ProductObj[] = products.map((item) => {
       if (item._id !== idx) {
         return item;
       } else {
@@ -88,7 +88,7 @@ export default function Proucts() {
     setProducts(newProductsArr);
   };
   const deleteProduct = (idx: string) => {
-    const newProductsArray: productObj[] = products.filter((item) => {
+    const newProductsArray: ProductObj[] = products.filter((item) => {
       if (item._id !== idx) {
         return item;
       }

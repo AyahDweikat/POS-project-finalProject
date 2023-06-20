@@ -1,16 +1,16 @@
 
 
-interface signUpObj {
+interface SignUpObj {
     userName: string;
     email: string;
     password: string;
     cPassword: string;
 }
-interface loginObj {
+interface LoginObj {
     email: string;
     password: string;
 }
-export const fetchApi =async (method:string,obj:(signUpObj | loginObj), url:string)=>{
+export const fetchApi =async (method:string,obj:(SignUpObj | LoginObj), url:string)=>{
     const requestOptions = {
         method,
         headers: { "Content-Type": "application/json"},
