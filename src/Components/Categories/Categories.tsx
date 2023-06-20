@@ -105,14 +105,6 @@ export default function Categories() {
     } else {
       alert(results.message);
     }
-    // const newCategoryArr: categoryObj[] = categories.map((item) => {
-    //   if (item._id !== idx) {
-    //     return item;
-    //   } else {
-    //     return { ...item, category: newCat };
-    //   }
-    // });
-    // setCategories(newCategoryArr);
   };
   return (
     <>

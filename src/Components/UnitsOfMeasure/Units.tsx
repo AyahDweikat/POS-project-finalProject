@@ -7,88 +7,107 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Button, IconButton, TextField } from "@mui/material";
 import { Formik } from "formik";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useLocation, useNavigate } from "react-router-dom";
+import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 
-interface unitObj {
+type unitObj = {
   _id: string;
-  unitMeasure: string;
+  unitOfMeasure: string;
   baseUnit: string;
   conversionFactor: number;
 }
 interface InputsObj {
-  unitMeasure: string;
+  unitOfMeasure: string;
   baseUnit: string;
   conversionFactor: number;
 }
-function createData(
-  _id: string,
-  unitMeasure: string,
-  baseUnit: string,
-  conversionFactor: number
-) {
-  return { _id, unitMeasure, baseUnit, conversionFactor };
-}
 
-// const validationSchema = yup.object({
-//   email: yup
-//     .string('Enter your email')
-//     .email('Enter a valid email')
-//     .required('Email is required'),
-//   password: yup
-//     .string('Enter your password')
-//     .min(8, 'Password should be of minimum 8 characters length')
-//     .required('Password is required'),
-// });
+
 export default function Units() {
   const [isEditting, setIsEditting] = useState<boolean>(false);
+  const [units, setUnits] = useState<unitObj[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const [units, setUnits] = useState<unitObj[]>([
-    createData(nanoid(), "Kilogram", "Kilogram", 1),
-    createData(nanoid(), "Gram", "Kilogram", 1000),
-    createData(nanoid(), "Pound", "Kilogram", 2.20462),
-    createData(nanoid(), "Ounce", "Kilogram", 35.2739199982575),
-  ]);
-  const addUnitRow = (valuesFromInputs: InputsObj) => {
-    const newUnitArr: unitObj[] = [
-      { _id: nanoid(), ...valuesFromInputs },
-      ...units,
-    ];
-    setUnits(newUnitArr);
-    navigate(location.pathname);
-  };
-  const updateUnitCells = (idx: string, newText: string, key: string) => {
-    // const updatedUnit:(unitObj|undefined) =units.find(item=> item._id === idx)
-    // if (updatedUnit && updatedUnit?[key] == newText) {
-    //   return;
-    // }
-    // if(categories.find(item=> item[key] === newText)){
-    //   return;
-    // }
-    const newUnitArr: unitObj[] = units.map((item) => {
-      if (item._id !== idx) {
-        return item;
-      } else {
-        return { ...item, [key]: newText };
-      }
-    });
-    setUnits(newUnitArr);
-  };
-  const deleteUnitRow = (idx: string) => {
-    const newUnitsArray: unitObj[] = units.filter((item) => {
-      if (item._id !== idx) {
-        return item;
-      }
-    });
-    setUnits(newUnitsArray);
-  };
+  const _token: string | null = localStorage.getItem("token");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const results = await fetchApiWithAuthNoBody(
+        "GET",
+        `https://posapp.onrender.com/unit/getUnits`,
+        `black__${_token}`
+      );
+      if (results.UnitList.length) {
+        setUnits(results.UnitList);
+      }
+      return results;
+    };
+    fetchData();
+  }, [units, _token]);
+
+
+
+  
+  const addUnitRow = async(valuesFromInputs: InputsObj) => {
+    const results = await fetchApiWithAuthAndBody(
+      "POST",
+      valuesFromInputs,
+      `https://posapp.onrender.com/unit/addUnit`,
+      `black__${_token}`
+    );
+    navigate(location.pathname);
+    if (results.message == "successs") {
+      alert("Category Added Successfully");
+    } else {
+      alert(results.message);
+    }
+  };
+  const updateUnitCells = async(idx: string, newText: (string|number), key: string) => {
+    const updatedUnit:(unitObj|undefined)=units.find(item=> item._id === idx)
+    if(!updatedUnit){
+      throw new Error("Unit is not found")
+    }
+    if (updatedUnit[key as keyof InputsObj] == newText) {
+      throw new Error("Changes are the same")
+    }
+    else {
+      const{_id, ...obj} = updatedUnit;
+      const newUnit: InputsObj = {...obj, [key]:newText}
+      const results = await fetchApiWithAuthAndBody(
+        "PATCH",
+        newUnit,
+        `https://posapp.onrender.com/unit/updateUnit/${idx}`,
+        `black__${_token}`
+      );
+      console.log(results)
+      navigate(location.pathname);
+      if (results.message == "successs updated") {
+        alert("Unit updated Successfully");
+      } else {
+        alert(results.message);
+      }
+    }
+  };
+  const deleteUnitRow = async(idx: string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "DELETE",
+      `https://posapp.onrender.com/unit/deleteUnit/${idx}`,
+      `black__${_token}`
+    );
+    navigate(location.pathname);
+    console.log(results.message);
+    if (results.message == "successs") {
+      alert("Unit deleted Successfully");
+    } else {
+      alert(results.message);
+    }
+  };
   return (
     <>
       <Box
@@ -106,15 +125,15 @@ export default function Units() {
           Add Units of Measure Form
         </Typography>
         <Formik
-          initialValues={{ unitMeasure: "", baseUnit: "", conversionFactor: 0 }}
+          initialValues={{ unitOfMeasure: "", baseUnit: "", conversionFactor: 0 }}
           validate={(values) => {
             const errors = {
-              unitMeasure: "",
+              unitOfMeasure: "",
               baseUnit: "",
               conversionFactor: "",
             };
-            if (!values.unitMeasure) {
-              errors.unitMeasure = "Required";
+            if (!values.unitOfMeasure) {
+              errors.unitOfMeasure = "Required";
             }
             if (!values.baseUnit) {
               errors.baseUnit = "Required";
@@ -146,7 +165,7 @@ export default function Units() {
                 e.preventDefault();
                 handleSubmit();
                 addUnitRow(values);
-                values.unitMeasure = "";
+                values.unitOfMeasure = "";
                 values.baseUnit = "";
                 values.conversionFactor = 0;
               }}
@@ -159,20 +178,20 @@ export default function Units() {
                 }}
                 label="Measure of Unit"
                 variant="outlined"
-                type="unitMeasure"
-                name="unitMeasure"
+                type="unitOfMeasure"
+                name="unitOfMeasure"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.unitMeasure}
+                value={values.unitOfMeasure}
               />
               <Typography
                 variant="body1"
                 component="p"
                 sx={{ pb: "10px", fontSize: "12px", color: "red" }}
               >
-                {errors.unitMeasure &&
-                  touched.unitMeasure &&
-                  errors.unitMeasure}
+                {errors.unitOfMeasure &&
+                  touched.unitOfMeasure &&
+                  errors.unitOfMeasure}
               </Typography>
               <TextField
                 id="baseUnitInput"
@@ -223,7 +242,7 @@ export default function Units() {
                 sx={{width:"80%", maxWidth:"140px"}}
                 variant="outlined"
                 disabled={
-                  !values.unitMeasure.length ||
+                  !values.unitOfMeasure.length ||
                   !values.baseUnit.length ||
                   !values.conversionFactor
                 }
@@ -262,7 +281,7 @@ export default function Units() {
                 <TableCell
                   component="th"
                   scope="row"
-                  id="unitMeasure"
+                  id="unitOfMeasure"
                   contentEditable
                   suppressContentEditableWarning={true}
                   onClick={() => setIsEditting(true)}
@@ -276,7 +295,7 @@ export default function Units() {
                     borderBottom: isEditting ? "1px solid grey" : "0px",
                   }}
                 >
-                  {row.unitMeasure}
+                  {row.unitOfMeasure}
                 </TableCell>
                 <TableCell
                   align="center"
