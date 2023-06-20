@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -15,102 +15,104 @@ import { Button, IconButton, TextField } from "@mui/material";
 import { Formik } from "formik";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
-import { nanoid } from "nanoid";
+import {
+  fetchApiWithAuthAndBody,
+  fetchApiWithAuthNoBody,
+} from "../fetchApi.ts";
+// import { useContext } from 'react';
+// import { GlobalContext } from "../../Context/context.tsx";
 
-// export const categoryObj = [
-//   "Bakery and Bread",
-//   "meat",
-//   "Seafood",
-//   "Pasta",
-//   "Rice",
-//   "Oils",
-//   "Sauces",
-//   "Salad Dressings",
-//   "Condiments",
-//   "Cereals",
-//   "Breakfast Foods",
-//   "Soups",
-//   "Canned Goods",
-//   "Frozen Foods",
-//   "Dairy",
-//   "Cheese",
-//   "Eggs",
-//   "Snacks",
-//   "Crackers",
-//   "Fruits",
-//   "Vegetables",
-//   "Drinks",
-// ];
 interface categoryObj {
   _id: string;
-  cat: string;
+  category: string;
+}
+interface category {
+  category: string;
 }
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [categories, setCategories] = useState<categoryObj[]>([]);
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const [categories, setCategories] = useState<categoryObj[]>([
-    { _id: nanoid(), cat: "bakery" },
-    { _id: nanoid(), cat: "bread" },
-    { _id: nanoid(), cat: "meat" },
-    { _id: nanoid(), cat: "salad dressings" },
-    { _id: nanoid(), cat: "Condiments" },
-    { _id: nanoid(), cat: "breakfast foods" },
-    { _id: nanoid(), cat: "soups" },
-    { _id: nanoid(), cat: "sauces" },
-    { _id: nanoid(), cat: "oils" },
-    { _id: nanoid(), cat: "canned goods" },
-    { _id: nanoid(), cat: "rice" },
-    { _id: nanoid(), cat: "pasta" },
-    { _id: nanoid(), cat: "seafood" },
-    { _id: nanoid(), cat: "cereals" },
-    { _id: nanoid(), cat: "frozen foods" },
-    { _id: nanoid(), cat: "dairy" },
-    { _id: nanoid(), cat: "cheese" },
-    { _id: nanoid(), cat: "eggs" },
-    { _id: nanoid(), cat: "snacks" },
-    { _id: nanoid(), cat: "crackers" },
-    { _id: nanoid(), cat: "fruits" },
-    { _id: nanoid(), cat: "vegetables" },
-    { _id: nanoid(), cat: "drinks" },
-  ]);
-  const deleteCategory = (idx: string) => {
-    const newCategoryArray: categoryObj[] = categories.filter((item) => {
-      if (item._id !== idx) {
-        return item;
+  const _token: string | null = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const results = await fetchApiWithAuthNoBody(
+        "GET",
+        `https://posapp.onrender.com/category/getCategories`,
+        `black__${_token}`
+      );
+      if (results.CategoryList.length) {
+        setCategories(results.CategoryList);
       }
-    });
-    setCategories(newCategoryArray);
+      return results;
+    };
+    fetchData();
+  }, [categories, _token]);
+  const deleteCategory = async (idx: string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "DELETE",
+      `https://posapp.onrender.com/category/deleteCategory/${idx}`,
+      `black__${_token}`
+    );
+    navigate(location.pathname);
+    console.log(results.message);
+    if (results.message == "successs") {
+      alert("Category deleted Successfully");
+    } else {
+      alert(results.message);
+    }
   };
-  const addCategory = (newCat: string) => {
+  const addCategory = async (newCat: string) => {
     if (!newCat.length) {
       return;
     }
-    if (!categories.find((item) => item.cat === newCat)) {
-      const newCategoryArr: categoryObj[] = [
-        { _id: nanoid(), cat: newCat },
-        ...categories,
-      ];
-      setCategories(newCategoryArr);
+    if (!categories.find((item) => item.category === newCat)) {
+      const newCategory: category = { category: newCat };
+      const results = await fetchApiWithAuthAndBody(
+        "POST",
+        newCategory,
+        `https://posapp.onrender.com/category/addCategory`,
+        `black__${_token}`
+      );
       navigate(location.pathname);
+      if (results.message == "successs") {
+        alert("Category Added Successfully");
+      } else {
+        alert(results.message);
+      }
     }
   };
-  const updateCategory = (idx: string, newCat: string) => {
+  const updateCategory = async (idx: string, newCat: string) => {
     const updatedCat = categories.find((item) => item._id === idx);
-    if (updatedCat && updatedCat.cat == newCat) {
+    if (updatedCat && updatedCat.category == newCat) {
       return;
     }
-    if (categories.find((item) => item.cat === newCat)) {
+    if (categories.find((item) => item.category === newCat)) {
       return;
     }
-    const newCategoryArr: categoryObj[] = categories.map((item) => {
-      if (item._id !== idx) {
-        return item;
-      } else {
-        return { ...item, cat: newCat };
-      }
-    });
-    setCategories(newCategoryArr);
+    const newCategory: category = { category: newCat };
+    const results = await fetchApiWithAuthAndBody(
+      "PATCH",
+      newCategory,
+      `https://posapp.onrender.com/category/updateCategory/${idx}`,
+      `black__${_token}`
+    );
+    navigate(location.pathname);
+    if (results.message == "successs updated") {
+      alert("Category updated Successfully");
+    } else {
+      alert(results.message);
+    }
+    // const newCategoryArr: categoryObj[] = categories.map((item) => {
+    //   if (item._id !== idx) {
+    //     return item;
+    //   } else {
+    //     return { ...item, category: newCat };
+    //   }
+    // });
+    // setCategories(newCategoryArr);
   };
   return (
     <>
@@ -164,7 +166,10 @@ export default function Categories() {
             >
               <TextField
                 id="outlined-basic"
-                sx={{width: { xs:"85%", sm:"70%", md:"50%"}, maxWidth:"400px"}}
+                sx={{
+                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  maxWidth: "400px",
+                }}
                 label="Category Name"
                 variant="outlined"
                 type="category"
@@ -182,7 +187,7 @@ export default function Categories() {
               </Typography>
               <Button
                 type="submit"
-                sx={{width:"80%", maxWidth:"140px"}}
+                sx={{ width: "80%", maxWidth: "140px" }}
                 variant="outlined"
                 disabled={!values.category.length}
               >
@@ -234,7 +239,7 @@ export default function Categories() {
                     borderBottom: isEditting ? "1px solid grey" : "0px",
                   }}
                 >
-                  {category.cat}
+                  {category.category}
                 </ListItemText>
               </ListItem>
             );

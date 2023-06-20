@@ -10,7 +10,7 @@ function Layout() {
   useEffect(()=>{
     const _token:(string|null) = localStorage.getItem("token");
     setToken(_token||"")
-  })
+  },[])
   const auth = {
     user,
     token,
