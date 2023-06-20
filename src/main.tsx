@@ -10,6 +10,9 @@ import Units from './Components/UnitsOfMeasure/Units.tsx';
 import Signup from './Components/Signup/Signup.tsx';
 import Login from './Components/Login/Login.tsx';
 import Layout from './Components/Layout/Layout.tsx';
+import IsAuth from './Components/IsAuth/IsAuth.tsx';
+import RequireAuth from './Components/RequireAuth/RequireAuth.tsx';
+import Profile from './Components/Profile/Profile.tsx';
 
 const router = createBrowserRouter([
   {
@@ -22,30 +25,34 @@ const router = createBrowserRouter([
       {
         errorElement:<ErrorPage />,
         children: [
-          {index:true, element:<Carts />},
+          {index:true, element:<RequireAuth><Carts /></RequireAuth> },
           {
             path: "carts",
-            element: <Carts />,
+            element: <RequireAuth><Carts /></RequireAuth>,
           },
           {
             path: "products",
-            element: <Products />,
+            element:<RequireAuth><Products /></RequireAuth>,
           },
           {
             path: "categories",
-            element: <Categories />,
+            element: <RequireAuth><Categories /></RequireAuth>,
           },
           {
             path: "units",
-            element: <Units />,
+            element: <RequireAuth><Units /></RequireAuth> ,
+          },
+          {
+            path: "profile",
+            element: <RequireAuth><Profile /></RequireAuth> ,
           },
           {
             path: "signup",
-            element: <Signup />,
+            element: <IsAuth><Signup /></IsAuth>,
           },
           {
             path: "login",
-            element: <Login />,
+            element: <IsAuth><Login /></IsAuth>,
           },
         ],
       },

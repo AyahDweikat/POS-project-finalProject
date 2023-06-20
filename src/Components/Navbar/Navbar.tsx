@@ -10,15 +10,19 @@ import Container from '@mui/material/Container';
 // import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+// import MenuItem from '@mui/material/MenuItem';
 // import AdbIcon from '@mui/icons-material/Adb';
-import {Form} from 'react-router-dom'
+import {Form, useNavigate} from 'react-router-dom'
+import { useContext } from 'react';
+import { GlobalContext } from '../../Context/context.tsx';
 
 
-const pages = ['Carts', 'Products', 'Categories', 'Units', 'Signup'];
 const settings = ['Profile', 'Logout'];
 
 function Navbar() {
+  const { auth } = useContext(GlobalContext)
+  const pages = auth?.token.length ? ['Carts', 'Products', 'Categories', 'Units'] :['Signup', 'login'] 
+  const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -100,7 +104,6 @@ function Navbar() {
               ))}
             </Menu>
           </Box>
-          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
             variant="h5"
             noWrap
@@ -132,7 +135,7 @@ function Navbar() {
                 </Form>
             ))}
           </Box>
-
+          {auth?.token &&  
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -156,12 +159,26 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+                <Form action={`${setting}`} key={setting}>
+                <Button
+                  type="submit"
+                  onClick={()=>{
+                    handleCloseNavMenu()
+                    if(setting == "logout"){
+                      localStorage.removeItem("token");
+                    } else {
+                      navigate('/profile')
+                    }
+                  }}
+                  sx={{ p: 2, color: 'black', display: 'block', width:"100%" }}
+                  >
+                  {setting}
+                </Button>
+            </Form>
               ))}
             </Menu>
           </Box>
+          }
         </Toolbar>
       </Container>
     </AppBar>
