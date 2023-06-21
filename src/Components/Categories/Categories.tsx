@@ -34,22 +34,22 @@ export default function Categories() {
   const location = useLocation();
   const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const _token: string | null = localStorage.getItem("token");
+  const _token: string | null = localStorage.getItem("token")||"";
 
+  const fetchData = async (_token:string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/category/getCategories`,
+      `black__${_token}`
+    );
+    if (results.CategoryList) {
+      setCategories(results.CategoryList);
+    }
+    return results;
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const results = await fetchApiWithAuthNoBody(
-        "GET",
-        `https://posapp.onrender.com/category/getCategories`,
-        `black__${_token}`
-      );
-      if (results.CategoryList.length) {
-        setCategories(results.CategoryList);
-      }
-      return results;
-    };
-    fetchData();
-  }, [categories, _token]);
+    fetchData(_token);
+  }, [_token]);
   const deleteCategory = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
@@ -57,11 +57,13 @@ export default function Categories() {
       `black__${_token}`
     );
     navigate(location.pathname);
-    console.log(results.message);
+    console.log(results);
     if (results.message == "successs") {
+      fetchData(_token);
       alert("Category deleted Successfully");
     } else {
       alert(results.message);
+      console.log(results)
     }
   };
   const addCategory = async (newCat: string) => {
@@ -78,6 +80,7 @@ export default function Categories() {
       );
       navigate(location.pathname);
       if (results.message == "successs") {
+        fetchData(_token);
         alert("Category Added Successfully");
       } else {
         alert(results.message);
@@ -101,6 +104,7 @@ export default function Categories() {
     );
     navigate(location.pathname);
     if (results.message == "successs updated") {
+      fetchData(_token);
       alert("Category updated Successfully");
     } else {
       alert(results.message);

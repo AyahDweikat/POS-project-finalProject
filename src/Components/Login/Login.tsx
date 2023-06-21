@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import { fetchApi } from "./../fetchApi.ts";
@@ -5,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { GlobalContext } from "../../Context/context.tsx";
 
-// interface Auth {
-//   user: string;
-//   token: string;
-//   setToken:void;
-//   setUser:void;
-//   signout:void;
-// }
+type Auth = {
+  user: string;
+  token: string;
+  setToken:void;
+  setUser:void;
+  signout:void;
+}
 interface LoginObj {
   email: string;
   password: string;

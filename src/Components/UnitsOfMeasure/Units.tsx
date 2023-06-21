@@ -33,22 +33,23 @@ export default function Units() {
   const [units, setUnits] = useState<UnitObj[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const _token: string | null = localStorage.getItem("token");
+  const _token: string = localStorage.getItem("token")||"";
 
+  async function fetchData(_token:string){
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/unit/getUnits`,
+      `black__${_token}`
+    );
+    console.log(results)
+    if (results.UnitList) {
+      setUnits(results.UnitList);
+    }
+    return results;
+  }
   useEffect(() => {
-    const fetchData = async () => {
-      const results = await fetchApiWithAuthNoBody(
-        "GET",
-        `https://posapp.onrender.com/unit/getUnits`,
-        `black__${_token}`
-      );
-      if (results.UnitList.length) {
-        setUnits(results.UnitList);
-      }
-      return results;
-    };
-    fetchData();
-  }, [units, _token]);
+    fetchData(_token);
+  }, [_token]);
 
 
 
@@ -62,6 +63,7 @@ export default function Units() {
     );
     navigate(location.pathname);
     if (results.message == "successs") {
+      fetchData(_token);
       alert("Category Added Successfully");
     } else {
       alert(results.message);
@@ -84,9 +86,9 @@ export default function Units() {
         `https://posapp.onrender.com/unit/updateUnit/${idx}`,
         `black__${_token}`
       );
-      console.log(results)
       navigate(location.pathname);
       if (results.message == "successs updated") {
+        fetchData(_token);
         alert("Unit updated Successfully");
       } else {
         alert(results.message);
@@ -102,6 +104,7 @@ export default function Units() {
     navigate(location.pathname);
     console.log(results.message);
     if (results.message == "successs") {
+      fetchData(_token);
       alert("Unit deleted Successfully");
     } else {
       alert(results.message);
