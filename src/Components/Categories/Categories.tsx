@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-// import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-// import Divider from "@mui/material/Divider";
-// import InboxIcon from "@mui/icons-material/Inbox";
-// import DraftsIcon from '@mui/icons-material/Drafts';
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Button, IconButton, TextField } from "@mui/material";
@@ -19,8 +15,8 @@ import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
 } from "../fetchApi.ts";
-// import { useContext } from 'react';
-// import { GlobalContext } from "../../Context/context.tsx";
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface CategoryObj {
   _id: string;
@@ -33,6 +29,8 @@ export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
   const [categories, setCategories] = useState<CategoryObj[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [isEditting, setIsEditting] = useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token")||"";
 
@@ -60,10 +58,11 @@ export default function Categories() {
     console.log(results);
     if (results.message == "successs") {
       fetchData(_token);
-      alert("Category deleted Successfully");
+      handleShowSnackBar()
+      setSnackBarMsg("Category deleted Successfully");
     } else {
-      alert(results.message);
-      console.log(results)
+      handleShowSnackBar()
+      setSnackBarMsg(results.message);
     }
   };
   const addCategory = async (newCat: string) => {
@@ -81,9 +80,11 @@ export default function Categories() {
       navigate(location.pathname);
       if (results.message == "successs") {
         fetchData(_token);
-        alert("Category Added Successfully");
+        handleShowSnackBar()
+        setSnackBarMsg("Category Added Successfully");
       } else {
-        alert(results.message);
+        handleShowSnackBar()
+        setSnackBarMsg(results.message);
       }
     }
   };
@@ -105,11 +106,45 @@ export default function Categories() {
     navigate(location.pathname);
     if (results.message == "successs updated") {
       fetchData(_token);
-      alert("Category updated Successfully");
+      handleShowSnackBar()
+      setSnackBarMsg("Category updated Successfully");
     } else {
-      alert(results.message);
+      handleShowSnackBar()
+      setSnackBarMsg(results.message);
     }
   };
+
+
+
+
+
+  const handleShowSnackBar = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
+
+  
   return (
     <>
       <Box
@@ -242,6 +277,13 @@ export default function Categories() {
           })}
         </List>
       </Box>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={snackBarMsg}
+        action={action}
+      />
     </>
   );
 }

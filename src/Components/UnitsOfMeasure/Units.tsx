@@ -14,7 +14,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
-
+import React from 'react';
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 type UnitObj = {
   _id: string;
   unitOfMeasure: string;
@@ -33,6 +35,8 @@ export default function Units() {
   const [units, setUnits] = useState<UnitObj[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [open, setOpen] = useState<boolean>(false);
+  const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const _token: string = localStorage.getItem("token")||"";
 
   async function fetchData(_token:string){
@@ -50,10 +54,6 @@ export default function Units() {
   useEffect(() => {
     fetchData(_token);
   }, [_token]);
-
-
-
-  
   const addUnitRow = async(valuesFromInputs: InputsObj) => {
     const results = await fetchApiWithAuthAndBody(
       "POST",
@@ -64,9 +64,11 @@ export default function Units() {
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      alert("Category Added Successfully");
+      handleShowSnackBar()
+      setSnackBarMsg("Unit Added Successfully");
     } else {
-      alert(results.message);
+      handleShowSnackBar()
+      setSnackBarMsg(results.message);
     }
   };
   const updateUnitCells = async(idx: string, newText: (string|number), key: string) => {
@@ -89,9 +91,11 @@ export default function Units() {
       navigate(location.pathname);
       if (results.message == "successs updated") {
         fetchData(_token);
-        alert("Unit updated Successfully");
+        handleShowSnackBar()
+        setSnackBarMsg("Unit updated Successfully");
       } else {
-        alert(results.message);
+        handleShowSnackBar()
+        setSnackBarMsg(results.message);
       }
     }
   };
@@ -105,11 +109,39 @@ export default function Units() {
     console.log(results.message);
     if (results.message == "successs") {
       fetchData(_token);
-      alert("Unit deleted Successfully");
+      handleShowSnackBar()
+      setSnackBarMsg("Unit deleted Successfully");
     } else {
-      alert(results.message);
+      handleShowSnackBar()
+      setSnackBarMsg(results.message);
     }
   };
+  const handleShowSnackBar = () => {
+    setOpen(true);
+  };
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
+
+
   return (
     <>
       <Box
@@ -349,6 +381,13 @@ export default function Units() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={snackBarMsg}
+        action={action}
+      />
     </>
   );
 }
