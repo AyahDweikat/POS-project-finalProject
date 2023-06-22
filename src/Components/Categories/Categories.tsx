@@ -55,7 +55,6 @@ export default function Categories() {
       `black__${_token}`
     );
     navigate(location.pathname);
-    console.log(results);
     if (results.message == "successs") {
       fetchData(_token);
       handleShowSnackBar()

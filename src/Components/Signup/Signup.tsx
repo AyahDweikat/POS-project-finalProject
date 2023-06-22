@@ -20,7 +20,7 @@ function Signup() {
       `https://posapp.onrender.com/auth/signup`
     );
     if (results.message == "user is already exist") {
-      console.log("user is already exist");
+      // alert("user is already exist");
     } else if (results.message == "user created") {
       navigate("/login");
     }

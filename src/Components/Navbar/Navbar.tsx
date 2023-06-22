@@ -165,7 +165,6 @@ function Navbar() {
                   onClick={()=>{
                     handleCloseNavMenu()
                     if(setting == "Logout"){
-                      console.log(setting)
                       navigate('/login')
                       auth.signout()
                       localStorage.clear();

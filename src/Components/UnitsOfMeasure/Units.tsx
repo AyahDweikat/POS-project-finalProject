@@ -45,7 +45,6 @@ export default function Units() {
       `https://posapp.onrender.com/unit/getUnits`,
       `black__${_token}`
     );
-    console.log(results)
     if (results.UnitList) {
       setUnits(results.UnitList);
     }
@@ -106,7 +105,6 @@ export default function Units() {
       `black__${_token}`
     );
     navigate(location.pathname);
-    console.log(results.message);
     if (results.message == "successs") {
       fetchData(_token);
       handleShowSnackBar()
