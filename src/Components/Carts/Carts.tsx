@@ -1,5 +1,5 @@
 
-import Box from "@mui/material/Box";
+import {Box} from "@mui/material";
 import { Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,25 +10,32 @@ import IconButton from "@mui/material/IconButton";
 // import { Button, TextField } from "@mui/material";
 // import { Formik } from "formik";
 
-interface ProductInDB {
+
+interface ProductItemDB {
+  productName: string;
+  productCategory: string;
+  productPrice: number;
+  measureUnit: string;
+}
+interface ProductsInDB {
   _id: string;
-  productId: string;
+  productId:string;
+  product: ProductItemDB;
   quantity: number;
 }
-
 interface CartInDB {
   _id: string;
   cartDesc: string;
   cartTax: number;
   cartDiscount: number;
-  products: Array<ProductInDB>;
+  products: Array<ProductsInDB>;
 }
 
 function Carts() {
   const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [carts, setCarts] = useState<CartInDB[]>([]);
-  
+  console.log(carts)
   const _token: string | null = localStorage.getItem("token") || "";
 
   const fetchData = async (_token: string) => {
@@ -91,7 +98,7 @@ function Carts() {
       <Box>
         {carts.map((cart) => {
           return (
-            <CartItem _token={_token} carts={carts} cart={cart} setSnackBarMsg={setSnackBarMsg} fetchData={fetchData} setOpen={setOpen} />
+            <CartItem key={cart._id} _token={_token} carts={carts} cart={cart} setSnackBarMsg={setSnackBarMsg} fetchData={fetchData} setOpen={setOpen} />
           );
         })}
       </Box>
