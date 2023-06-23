@@ -11,7 +11,7 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Button, IconButton, TextField } from "@mui/material";
 import { Formik } from "formik";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import {Box} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 import React from 'react';
