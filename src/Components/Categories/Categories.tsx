@@ -17,14 +17,9 @@ import {
 } from "../fetchApi.ts";
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
+import { Category, CategoryObj } from "../Types.tsx";
 
-interface CategoryObj {
-  _id: string;
-  category: string;
-}
-interface Category {
-  category: string;
-}
+
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();

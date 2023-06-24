@@ -2,13 +2,9 @@ import { Button, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import { fetchApi } from "./../fetchApi.ts";
 import { useNavigate } from "react-router-dom";
+import { SignUpObj } from "../Types.tsx";
 
-interface SignUpObj {
-  userName: string;
-  email: string;
-  password: string;
-  cPassword: string;
-}
+
 
 function Signup() {
   const navigate = useNavigate();

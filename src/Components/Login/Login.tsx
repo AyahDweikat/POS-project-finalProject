@@ -5,18 +5,7 @@ import { fetchApi } from "./../fetchApi.ts";
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { GlobalContext } from "../../Context/context.tsx";
-
-type Auth = {
-  user: string;
-  token: string;
-  setToken:void;
-  setUser:void;
-  signout:void;
-}
-interface LoginObj {
-  email: string;
-  password: string;
-}
+import { LoginObj } from './../Types';
 
 function Login() {
   const navigate = useNavigate();

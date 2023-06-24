@@ -17,17 +17,9 @@ import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
-type UnitObj = {
-  _id: string;
-  unitOfMeasure: string;
-  baseUnit: string;
-  conversionFactor: number;
-}
-interface InputsObj {
-  unitOfMeasure: string;
-  baseUnit: string;
-  conversionFactor: number;
-}
+import { InputsObj, UnitObj } from "../Types";
+
+
 
 
 export default function Units() {
@@ -124,7 +116,6 @@ export default function Units() {
 
     setOpen(false);
   };
-
   const action = (
     <React.Fragment>
       <IconButton
@@ -137,8 +128,6 @@ export default function Units() {
       </IconButton>
     </React.Fragment>
   );
-
-
 
   return (
     <>

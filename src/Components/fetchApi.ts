@@ -42,8 +42,3 @@ export const fetchApiWithAuthAndBody =async (method:string,obj={}, url:string, t
         requestOptions
     ).then((response) => response.json())
 }
-
-
-
-
-

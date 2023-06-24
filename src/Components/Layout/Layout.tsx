@@ -21,9 +21,11 @@ function Layout({ children }:{children: React.ReactNode}) {
     },
   };
 
+  const neededObj = {cart:{}}
+
   return (
     <div>
-      <GlobalContext.Provider value={{ auth }}>
+      <GlobalContext.Provider value={{ auth, neededObj }}>
         {children}
       </GlobalContext.Provider>
     </div>
