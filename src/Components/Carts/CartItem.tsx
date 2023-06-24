@@ -1,115 +1,44 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useContext } from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
-import { Box, Checkbox, Divider } from "@mui/material";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import { fetchApiWithAuthNoBody } from "../fetchApi";
+import { Checkbox, Divider, Button, Snackbar } from "@mui/material";
+// import ListItem from "@mui/material/ListItem";
+// import ListItemText from "@mui/material/ListItemText";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import { GlobalContext } from "../../Context/context";
+import { CartInDB } from "../Types";
+import { useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
-interface ProductItemDB {
-  productName: string;
-  productCategory: string;
-  productPrice: number;
-  measureUnit: string;
-}
-interface ProductsInDB {
-  _id: string;
-  productId:string;
-  product: ProductItemDB;
-  quantity: number;
-}
-interface Products {
-  productId:string;
-  product: ProductItemDB;
-  quantity: number;
-}
-interface CartInDB {
-  _id: string;
-  cartDesc: string;
-  cartTax: number;
-  cartDiscount: number;
-  products: Array<ProductsInDB>;
-}
-interface Cart {
-  cartDesc: string;
-  cartTax: number;
-  cartDiscount: number;
-  products: Array<Products>;
-}
-interface CartItem {
+
+interface CartItemProps {
   cart: CartInDB;
-  carts: CartInDB[];
-  setSnackBarMsg: (id: string) => void;
   _token: string;
   fetchData: (id: string) => void;
-  setOpen: (id: boolean) => void;
 }
 
-const CartItem: React.FC<CartItem> = ({
+const CartItem: React.FC<CartItemProps> = ({
   cart,
-  setSnackBarMsg,
   _token,
   fetchData,
-  setOpen,
-  carts,
 }) => {
-  const [isEditting, setIsEditting] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(cart)
-  const updateCartData = async (idx: string, newText: string, key: string) => {
-    let _newText: string | number;
-    if (key == "cartTax" || key == "cartDiscount") {
-      _newText = Number(newText.split(":")[1]);
-    } else {
-      _newText = newText.split(":")[1];
-    }
-    const updatedCart: CartInDB | undefined = carts.find(
-      (item) => item._id === idx
-    );
-    if (!updatedCart) {
-      throw new Error("Cart is not found");
-    }
-    if (updatedCart[key as keyof CartInDB] == newText) {
-      throw new Error("Changes are the same");
-    } else {
-      const updatedProductsList: Products[] = updatedCart.products.map(
-        (product) => {
-          const { _id, ...obj } = product;
-          return obj;
-        }
-      );
-      const _updatedCart = {
-        ...updatedCart,
-        products: updatedProductsList,
-      };
-      const { _id, ...obj } = _updatedCart;
-      const newCart: Cart = { ...obj, [key]: _newText };
-      const results = await fetchApiWithAuthAndBody(
-        "PATCH",
-        newCart,
-        `https://posapp.onrender.com/cart/updateCart/${idx}`,
-        `black__${_token}`
-      );
-      navigate(location.pathname);
-      if (results.message == "successs updated") {
-        fetchData(_token);
-        handleShowSnackBar();
-        setSnackBarMsg("Unit updated Successfully");
-      } else {
-        handleShowSnackBar();
-        console.log(results);
-        setSnackBarMsg(results.message);
-      }
-    }
-  };
+  const {neededObj} = useContext(GlobalContext)
+
+
+  
+
   const deleteCart = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
@@ -125,51 +54,30 @@ const CartItem: React.FC<CartItem> = ({
       handleShowSnackBar();
       setSnackBarMsg(results.message);
     }
-  };
+  };//
 
-
-
-
-
-  const deleteProduct = async(idx:string)=>{
-    const deletedProductsList: (ProductsInDB)[] = cart.products.filter(
-      (product) => {
-          return product.productId != idx;
-      }
-    );
-    const updatedProductsList: (Products| undefined)[] = deletedProductsList.map(
-      (product) => {
-          const { _id, ...obj } = product;
-          return obj;
-      }
-    );
-    console.log(updatedProductsList)
-    const _updatedCart = {
-      ...cart,
-      products: updatedProductsList,
-    };
-    const { _id, ...newCart } = _updatedCart;
-    const results = await fetchApiWithAuthAndBody(
-      "PATCH",
-      newCart,
-      `https://posapp.onrender.com/cart/updateCart/${_id}`,
-      `black__${_token}`
-    );
-    navigate(location.pathname);
-    if (results.message == "successs updated") {
-      fetchData(_token);
-      handleShowSnackBar();
-      setSnackBarMsg("Cart updated Successfully");
-    } else {
-      handleShowSnackBar();
-      console.log(results);
-      setSnackBarMsg(results.message);
-    }
-  }
+  const openCart =(cart:CartInDB)=>{
+    neededObj.cart = cart;
+    navigate('/products?isCartOpen=true')
+  }//
+  
   const handleShowSnackBar = () => {
     setOpen(true);
-  };
+  };//
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={()=>setOpen(false)}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
   return (
+    <>
     <Card key={cart._id} sx={{ maxWidth: 400, m: "10px" }}>
       <CardHeader
         avatar={<Checkbox sx={{ color: "black" }} checked={true} />}
@@ -200,18 +108,9 @@ const CartItem: React.FC<CartItem> = ({
             p: 0,
             m: 0,
             textTransform: "capitalize",
-            outline: "none",
-            borderBottom: isEditting ? "1px solid grey" : "0px",
           }}
           color="text.primary"
           id="cartDesc"
-          onClick={() => setIsEditting(true)}
-          contentEditable={isEditting}
-          suppressContentEditableWarning={true}
-          onBlur={(e) => {
-            updateCartData(cart._id, e.target.innerText, e.target.id);
-            setIsEditting(false);
-          }}
         >
           Description: {cart.cartDesc}
         </Typography>
@@ -219,18 +118,9 @@ const CartItem: React.FC<CartItem> = ({
           variant="body1"
           color="text.secondary"
           id="cartDiscount"
-          onClick={() => setIsEditting(true)}
-          contentEditable
-          suppressContentEditableWarning={true}
-          onBlur={(e) => {
-            updateCartData(cart._id, e.target.innerText, e.target.id);
-            setIsEditting(false);
-          }}
           sx={{
             textTransform: "capitalize",
-            outline: "none",
             textAlign: "left",
-            borderBottom: isEditting ? "1px solid grey" : "0px",
           }}
         >
           Discount: {cart.cartDiscount}
@@ -239,52 +129,25 @@ const CartItem: React.FC<CartItem> = ({
           variant="body1"
           color="text.secondary"
           id="cartTax"
-          onClick={() => setIsEditting(true)}
-          contentEditable
-          suppressContentEditableWarning={true}
-          onBlur={(e) => {
-            updateCartData(cart._id, e.target.innerText, e.target.id);
-            setIsEditting(false);
-          }}
           sx={{
             textTransform: "capitalize",
-            outline: "none",
             textAlign: "left",
-            borderBottom: isEditting ? "1px solid grey" : "0px",
           }}
         >
           Tax: {cart.cartTax}
         </Typography>
       </CardContent>
       <Divider />
-      <Box>
-        {cart?.products.map((product) => {
-          return (
-            <ListItem
-              key={product?.productId}
-              sx={{ backgroundColor: "#eee5e5", m: "10px" }}
-              secondaryAction={
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => deleteProduct(product.productId)}
-                >
-                  <DeleteForeverRoundedIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText
-                sx={{
-                  textTransform: "capitalize",
-                  outline: "none",
-                }}
-              >
-                {product?.product?.productName}
-              </ListItemText>
-            </ListItem>
-          );
-        })}
-      </Box>
+      <Button onClick={()=>openCart(cart)}>View More & Edit Cart</Button>
     </Card>
+    <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={()=>setOpen(false)}
+        message={snackBarMsg}
+        action={action}
+      />
+    </>
   );
 };
 

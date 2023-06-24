@@ -1,43 +1,22 @@
-
-import {Box} from "@mui/material";
-import { Snackbar } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import CartItem from "./CartItem";
-import IconButton from "@mui/material/IconButton";
-
-// import { Button, TextField } from "@mui/material";
-// import { Formik } from "formik";
-
-
-interface ProductItemDB {
-  productName: string;
-  productCategory: string;
-  productPrice: number;
-  measureUnit: string;
-}
-interface ProductsInDB {
-  _id: string;
-  productId:string;
-  product: ProductItemDB;
-  quantity: number;
-}
-interface CartInDB {
-  _id: string;
-  cartDesc: string;
-  cartTax: number;
-  cartDiscount: number;
-  products: Array<ProductsInDB>;
-}
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { GlobalContext } from "../../Context/context";
+import { CartInDB } from "../Types";
 
 function Carts() {
-  const [open, setOpen] = useState<boolean>(false);
-  const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [carts, setCarts] = useState<CartInDB[]>([]);
-  console.log(carts)
   const _token: string | null = localStorage.getItem("token") || "";
+  const navigate = useNavigate();
+  const { neededObj } = useContext(GlobalContext);
 
+  const addNewCart = () => {
+    neededObj.cart = {};
+    navigate("/products?isCartOpen=true");
+  };
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -52,63 +31,23 @@ function Carts() {
   useEffect(() => {
     fetchData(_token);
   }, [_token]);
-
-  // const addUnitRow = async(valuesFromInputs: InputsObj) => {
-  //   const results = await fetchApiWithAuthAndBody(
-  //     "POST",
-  //     valuesFromInputs,
-  //     `https://posapp.onrender.com/unit/addUnit`,
-  //     `black__${_token}`
-  //   );
-  //   navigate(location.pathname);
-  //   if (results.message == "successs") {
-  //     fetchData(_token);
-  //     handleShowSnackBar()
-  //     setSnackBarMsg("Unit Added Successfully");
-  //   } else {
-  //     handleShowSnackBar()
-  //     setSnackBarMsg(results.message);
-  //   }
-  // };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
   return (
     <>
-      <Box></Box>
+      <Box>
+        <Button onClick={() => addNewCart()}>Add New Cart</Button>
+      </Box>
       <Box>
         {carts.map((cart) => {
           return (
-            <CartItem key={cart._id} _token={_token} carts={carts} cart={cart} setSnackBarMsg={setSnackBarMsg} fetchData={fetchData} setOpen={setOpen} />
+            <CartItem
+              key={cart._id}
+              _token={_token}
+              cart={cart}
+              fetchData={fetchData}
+            />
           );
         })}
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackBarMsg}
-        action={action}
-      />
     </>
   );
 }
