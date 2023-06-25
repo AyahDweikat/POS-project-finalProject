@@ -1,79 +1,70 @@
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
-// import CardActions from '@mui/material/CardActions';
-// import Collapse from '@mui/material/Collapse';
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import Box from "@mui/material/Box";
-import { useState } from "react";
-import { Button, TextField } from "@mui/material";
-import { Formik } from "formik";
+import { Box, Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import { fetchApiWithAuthNoBody } from "../fetchApi";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import CartScreen from "./CartScreen.tsx";
+import AddProductModal from "./AddProductModal.tsx";
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { ProductItemDB, ProductObj, ProductToCart } from "../Types.tsx";
 
-export default interface IFile {
-  url: string;
-  name: string;
+export interface Products {
+  productId: string;
+  product: ProductItemDB;
+  quantity: number;
 }
-interface ProductObj {
-  _id: string;
-  name: string;
-  code: string;
-  category: string;
-  image: string;
-  price: number;
-  unitOfMeasure: string;
-}
-interface ProductInputObj {
-  name: string;
-  code: string;
-  category: string;
-  image: string;
-  price: number;
-  unitOfMeasure: string;
-}
-export default function Proucts() {
+
+
+export default function Products() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isEditting, setIsEditting] = useState<boolean>(false);
-  const [products, setProducts] = useState<ProductObj[]>([
-    {
-      _id: "nhggkkjkjj",
-      name: "Akai Shuichi",
-      code: "fifty/fifty",
-      category: "love",
-      image:
-        "https://www.detectiveconanworld.com/wiki/images/thumb/8/83/Shuichi_Akai_Profile.jpg/275px-Shuichi_Akai_Profile.jpg",
-      price: 1200,
-      unitOfMeasure: "ton",
-    },
-    {
-      _id: "bvnnbvv",
-      name: "Akai Shuichi",
-      code: "fifty/fifty",
-      category: "love",
-      image:
-        "https://www.detectiveconanworld.com/wiki/images/thumb/8/83/Shuichi_Akai_Profile.jpg/275px-Shuichi_Akai_Profile.jpg",
-      price: 1200,
-      unitOfMeasure: "ton",
-    },
-  ]);
+  const [products, setProducts] = useState<ProductObj[]>([]);
+  const [productsToCart, setProductsToCart] = useState<Products[]>([])
+  const _token: string | null = localStorage.getItem("token") || "";
 
-  const [file, setFile] = useState<string>();
-  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFiles = e.target.files as FileList;
-    // setFile(URL.createObjectURL(selectedFiles?.[0]));
-    console.log(selectedFiles)
+  const isProductInCart = (idx:string) => {
+    if(productsToCart.find(item => item.productId == idx)){
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  const addProduct = (value: ProductInputObj) => {
-    // let obj ={...value, image:file,}
-    console.log({...value});
+  const [isOpenAddProductModal, setIsOpenAddProductModal] = useState<boolean>(false);
+  
+
+  const [queryStrings, ] = useSearchParams();
+  const indexOfCart = queryStrings.get("indexOfCart");
+
+  const fetchData = async (_token: string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/product/getProducts`,
+      `black__${_token}`
+    );
+    if (results.ProductList) {
+      setProducts(results.ProductList);
+    }
+    return results;
   };
-  const updateUnitCells = (idx: string, newText: string, key: string) => {
+  useEffect(() => {
+    fetchData(_token);
+  }, [_token]);
+
+
+
+  const updateProductData = (idx: string, newText: string, key: string) => {
     let _newText: number | string;
-    if (key == "price") {
+    if (key == "productPrice") {
       _newText = Number(newText.split(" ")[0]);
     } else {
       _newText = newText;
@@ -87,372 +78,183 @@ export default function Proucts() {
     });
     setProducts(newProductsArr);
   };
-  const deleteProduct = (idx: string) => {
-    const newProductsArray: ProductObj[] = products.filter((item) => {
-      if (item._id !== idx) {
-        return item;
-      }
-    });
-    setProducts(newProductsArray);
+
+  const addProductToCart=(product:ProductObj)=>{
+    const {_id, productImg, productCode, ...toCart} = product;
+    setProductsToCart([...productsToCart,{productId:_id, product:toCart,quantity:1 }])
+  }
+
+  const removeProductFromCart = (idx:string)=>{
+    const _newProductToCart:Products[] = productsToCart.filter((product)=>{
+      return product.productId != idx;
+    })
+    setProductsToCart(_newProductToCart)
+  }
+
+
+  const deleteProduct = async (idx: string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "DELETE",
+      `https://posapp.onrender.com/product/deleteProduct/${idx}`,
+      `black__${_token}`
+    );
+    navigate(location.pathname);
+    if (results.message == "successs") {
+      fetchData(_token);
+      alert("Product deleted Successfully");
+    } else {
+      alert(results.message);
+    }
   };
   return (
-    <>
-      <Box
-        sx={{
-          mt: 10,
-          border: "1px solid grey",
-          borderRadius: "8px",
-          width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
-          maxWidth: "665px",
-          mx: "auto",
-          py: "20px",
+    <Box sx={{minHeight:"89vh", height:"100%"}} onClick={()=>setIsOpenAddProductModal(false)}>
+      <Button
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsOpenAddProductModal(true);
         }}
       >
-        <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-          Add Product
-        </Typography>
-        <Formik
-          initialValues={{
-            name: "",
-            code: "",
-            image:"",
-            category: "",
-            price: 0,
-            unitOfMeasure: "",
-          }}
-          validate={(values) => {
-            const errors = {
-              name: "",
-              code: "",
-              category: "",
-              image: "",
-              price: "",
-              unitOfMeasure: "",
-            };
-            if (!values.name) {
-              errors.name = "Required";
-            }
-            if (!values.code) {
-              errors.code = "Required";
-            }
-            if (!values.category) {
-              errors.category = "Required";
-            }
-            if (!values.image) {
-              errors.image = "Required";
-            }
-            if (!values.price) {
-              errors.price = "Required";
-            }
-            if (!values.unitOfMeasure) {
-              errors.unitOfMeasure = "Required";
-            }
-            return errors;
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
+        Add Product
+      </Button>
+      {isOpenAddProductModal && <AddProductModal />}
+      <Box sx={{ display: "flex" }}>
+        <Box
+          sx={{
+            display: "flex",
+            py: "10px",
+            width: indexOfCart ? "100%" : "100%",
           }}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            // handleFileUpload,
-            // isSubmitting,
-            /* and other goodies */
-          }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-                addProduct(values);
-                values.name = "";
-                values.code = "";
-                values.category = "";
-                values.image = "";
-                values.price = 0;
-                values.unitOfMeasure = "";
-              }}
-            >
-              <TextField
-                id="name"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Name"
-                variant="outlined"
-                type="name"
-                name="name"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.name}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.name && touched.name && errors.name}
-              </Typography>
-              <TextField
-                id="code"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Code"
-                variant="outlined"
-                type="code"
-                name="code"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.code}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.code && touched.code && errors.code}
-              </Typography>
-              <TextField
-                id="category"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Category"
-                variant="outlined"
-                type="category"
-                name="category"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.category}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.category && touched.category && errors.category}
-              </Typography>
-
-              <TextField
-                id="image"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                // label="Image"
-                variant="outlined"
-                type="file"
-                name="image"
-                placeholder="add image"
-                onChange={handleFileUpload}
-                onBlur={handleBlur}
-                value={values.image}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {/* {errors.image &&
-                  touched.image &&
-                  errors.image} */}
-              </Typography>
-
-              <TextField
-                id="price"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Price"
-                variant="outlined"
-                type="price"
-                name="price"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.price}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.price && touched.price && errors.price}
-              </Typography>
-              <TextField
-                id="unitOfMeasure"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Unit Of Measure"
-                variant="outlined"
-                type="unitOfMeasure"
-                name="unitOfMeasure"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.unitOfMeasure}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.unitOfMeasure &&
-                  touched.unitOfMeasure &&
-                  errors.unitOfMeasure}
-              </Typography>
-
-              <Button
-                type="submit"
-                sx={{ width: "80%", maxWidth: "140px" }}
-                variant="outlined"
-                disabled={
-                  !values.name.length ||
-                  !values.code.length ||
-                  !values.category.length ||
-                  // !values.image.length ||
-                  !values.unitOfMeasure.length ||
-                  !values.price
+          {products.map((product) => {
+            return (
+              <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
+                <CardHeader
+                avatar={
+                  indexOfCart && 
+                  <Button onClick={isProductInCart(product._id)? ()=>removeProductFromCart(product._id) :()=>addProductToCart(product)}>
+                    {isProductInCart(product._id) && productsToCart.find(item => item.productId == product._id) ? <ShoppingCartIcon/> :<ShoppingCartOutlinedIcon />}
+                  </Button>
                 }
-              >
-                Add
-              </Button>
-            </form>
-          )}
-        </Formik>
-      </Box>
-
-      <Box sx={{ display: "flex", py: "10px" }}>
-        {products.map((product) => {
-          return (
-            <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
-              <CardHeader
                 action={
-                  <IconButton
-                    aria-label="delete"
-                    sx={{ p: "2px" }}
-                    onClick={() => deleteProduct(product._id)}
-                  >
-                    <DeleteForeverRoundedIcon />
-                  </IconButton>
-                }
-                title={product.name}
-                subheader={product.code}
-              />
-              <CardMedia
-                component="img"
-                height="194"
-                image={product.image}
-                alt={product.name}
-              />
-              <CardContent
-                sx={{
-                  p: 0,
-                  mx: 1,
-                  pt: "10px",
-                }}
-              >
-                <Typography
-                  variant="body1"
+                    <IconButton
+                      aria-label="delete"
+                      sx={{ p: "2px" }}
+                      onClick={() => deleteProduct(product._id)}
+                    >
+                      <DeleteForeverRoundedIcon />
+                    </IconButton>
+                  }
+                  title={product.productName}
+                  subheader={product.productCode}
+                />
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={product.productImg}
+                  alt={product.productName}
+                />
+                <CardContent
                   sx={{
-                    textAlign: "left",
-                    fontSize: "18px",
                     p: 0,
-                    m: 0,
-                    textTransform: "capitalize",
-                    outline: "none",
-                    // borderBottom: isEditting ? "1px solid grey" : "0px",
-                  }}
-                  color="text.primary"
-                  id="category"
-                  onClick={() => setIsEditting(true)}
-                  contentEditable={isEditting}
-                  suppressContentEditableWarning={true}
-                  onBlur={(e) => {
-                    updateUnitCells(
-                      product._id,
-                      e.target.innerText,
-                      e.target.id
-                    );
-                    setIsEditting(false);
-                  }}
-                >
-                  {product.category}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    p: 0,
-                    mx: 0,
-                    pt: "5px",
-                    alignItems: "flex-end",
+                    mx: 1,
+                    pt: "10px",
                   }}
                 >
                   <Typography
                     variant="body1"
-                    color="text.secondary"
-                    id="price"
+                    sx={{
+                      textAlign: "left",
+                      fontSize: "18px",
+                      p: 0,
+                      m: 0,
+                      textTransform: "capitalize",
+                      outline: "none",
+                    }}
+                    color="text.primary"
+                    id="productCategory"
                     onClick={() => setIsEditting(true)}
-                    contentEditable
+                    contentEditable={isEditting}
                     suppressContentEditableWarning={true}
                     onBlur={(e) => {
-                      updateUnitCells(
+                      updateProductData(
                         product._id,
                         e.target.innerText,
                         e.target.id
                       );
                       setIsEditting(false);
                     }}
+                  >
+                    {product.productCategory}
+                  </Typography>
+                  <Box
                     sx={{
-                      textTransform: "capitalize",
-                      outline: "none",
-                      // borderBottom: isEditting ? "1px solid grey" : "0px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      p: 0,
+                      mx: 0,
+                      pt: "5px",
+                      alignItems: "flex-end",
                     }}
                   >
-                    {product.price} $
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    id="unitOfMeasure"
-                    onClick={() => setIsEditting(true)}
-                    contentEditable
-                    suppressContentEditableWarning={true}
-                    onBlur={(e) => {
-                      updateUnitCells(
-                        product._id,
-                        e.target.innerText,
-                        e.target.id
-                      );
-                      setIsEditting(false);
-                    }}
-                    sx={{
-                      textTransform: "capitalize",
-                      outline: "none",
-                      // borderBottom: isEditting ? "1px solid grey" : "0px",
-                    }}
-                  >
-                    {product.unitOfMeasure}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          );
-        })}
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      id="productPrice"
+                      onClick={() => setIsEditting(true)}
+                      contentEditable
+                      suppressContentEditableWarning={true}
+                      onBlur={(e) => {
+                        updateProductData(
+                          product._id,
+                          e.target.innerText,
+                          e.target.id
+                        );
+                        setIsEditting(false);
+                      }}
+                      sx={{
+                        textTransform: "capitalize",
+                        outline: "none",
+                      }}
+                    >
+                      {product.productPrice} $
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      id="measureUnit"
+                      onClick={() => setIsEditting(true)}
+                      contentEditable
+                      suppressContentEditableWarning={true}
+                      onBlur={(e) => {
+                        updateProductData(
+                          product._id,
+                          e.target.innerText,
+                          e.target.id
+                        );
+                        setIsEditting(false);
+                      }}
+                      sx={{
+                        textTransform: "capitalize",
+                        outline: "none",
+                      }}
+                    >
+                      {product.measureUnit}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Box>
+        {indexOfCart && <CartScreen indexOfCart={indexOfCart} productsToCart={productsToCart} />}
       </Box>
-    </>
+      {/* <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Note archived"
+        action={action}
+      /> */}
+    </Box>
   );
 }

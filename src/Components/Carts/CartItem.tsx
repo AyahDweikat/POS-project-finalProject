@@ -58,7 +58,7 @@ const CartItem: React.FC<CartItemProps> = ({
 
   const openCart =(cart:CartInDB)=>{
     neededObj.cart = cart;
-    navigate('/products?isCartOpen=true')
+    navigate(`/products?indexOfCart=${cart._id}`)
   }//
   
   const handleShowSnackBar = () => {

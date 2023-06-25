@@ -5,7 +5,7 @@ import CartItem from "./CartItem";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../Context/context";
-import { CartInDB } from "../Types";
+import { CartInDB, fetchCartData } from "../Types";
 
 function Carts() {
   const [carts, setCarts] = useState<CartInDB[]>([]);
@@ -29,7 +29,7 @@ function Carts() {
     return results;
   };
   useEffect(() => {
-    fetchData(_token);
+    fetchCartData(_token).then(response => setCarts(response));
   }, [_token]);
   return (
     <>

@@ -1,3 +1,5 @@
+import { fetchApiWithAuthNoBody } from "./fetchApi";
+
 export type UnitObj = {
   _id: string;
   unitOfMeasure: string;
@@ -86,3 +88,18 @@ export interface Cart {
   cartDiscount: number;
   products: Array<Products>;
 }
+
+
+
+export const fetchCartData = async (_token: string) => {
+  const results = await fetchApiWithAuthNoBody(
+    "GET",
+    `https://posapp.onrender.com/cart/getCarts`,
+    `black__${_token}`
+  );
+  if (results.CartList) {
+    // setCarts(results.CartList);
+    return results.CartList
+  }
+  return results;
+};
