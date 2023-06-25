@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Typography, Snackbar, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { ListItemText, ListItem, Badge, IconButton } from "@mui/material";
-import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
+import { ListItemText, ListItem, IconButton } from "@mui/material";
+import { fetchApiWithAuthAndBody } from "../fetchApi";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Cart,
   CartInDB,
-  ProductToCart,
   Products,
   ProductsInDB,
-  fetchCartData,
 } from "../Types";
 import { Divider } from "@mui/material";
 import { Button } from "@mui/material";
@@ -18,21 +17,30 @@ import { useLocation, useNavigate } from "react-router-dom";
 interface CartScreenProps {
   productsToCart: Products[];
   indexOfCart: string;
+  cart:CartInDB |undefined, 
+  setCart:(cart:CartInDB)=>void,
+  getCart:(_token: string, indexOfCart: string)=>void,
 }
 const CartScreen: React.FC<CartScreenProps> = ({
   indexOfCart,
   productsToCart,
+  cart, 
+  setCart,
+  getCart,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
   const _token: string | null = localStorage.getItem("token") || "";
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  const [cart, setCart] = useState<CartInDB>();
+  // const [cart, setCart] = useState<CartInDB>();
+  const newCart = {...cart, products:productsToCart}
 
-  // const updateProductsCart = async(cart)=>{
-  //   const newCart:CartInDB = cart.products.map()
-  // };
+  useEffect(()=>{
+    if(typeof cart != "undefined"){
+      updateCartToDB(newCart, cart?._id)
+    }
+  },[productsToCart])
 
   useEffect(() => {
     if (indexOfCart.length) {
@@ -40,31 +48,45 @@ const CartScreen: React.FC<CartScreenProps> = ({
     }
   }, [_token, indexOfCart]);
 
-  const getCart = (_token: string, indexOfCart: string) => {
-    fetchCartData(_token)
-      .then((res: CartInDB[]) => res.find((cart) => cart._id == indexOfCart))
-      .then((response: CartInDB | undefined) => {
-        if (response) setCart(response);
-      });
-  };
+  const calculatePrice = ()=>{
+    let totalPrice=0;
+    if(typeof cart !='undefined'){
+      cart?.products?.forEach((item)=>{
+        totalPrice+= (item.quantity* item.product.productPrice)
+      })
+      return Number((totalPrice * (1 + cart?.cartTax) * (1-cart?.cartDiscount)).toFixed(2));
+    }
+    return 0;
+    
+  }
+  
 
-  const updateCartToDB = async (idx: string) => {
-    if (typeof cart != "undefined") {
-      const newCart: Cart = turnCartType(cart);
+  const updateCartToDB = async (_cart:(CartInDB|any) =cart,idx: string) => {
+    console.log("first")
+    let _newCart:Cart;
+    if (typeof _cart != "undefined") {
+      if(_cart instanceof CartInDB){
+        _newCart = turnCartType(_cart);
+      } else {
+        const __cart ={ ...cart, cartDesc: cart?.cartDesc || "", cartDiscount: cart?.cartDiscount || 0, cartTax: cart?.cartTax || 0, products:productsToCart}
+        const {_id,...newCart} = __cart;
+        _newCart = newCart;
+      }
       const results = await fetchApiWithAuthAndBody(
         "PATCH",
-        newCart,
+        _newCart,
         `https://posapp.onrender.com/cart/updateCart/${idx}`,
         `black__${_token}`
       );
       navigate(`${location.pathname}${location.search}`);
       if (results.message == "successs updated") {
-        fetchCartData(_token).then((res) => console.log(res));
+        getCart(_token, indexOfCart)
+        // fetchCartData(_token).then((res) => console.log(res));
         handleShowSnackBar();
         setSnackBarMsg("Cart updated Successfully");
       } else {
         handleShowSnackBar();
-        // console.log(results);
+        console.log(results);
         setSnackBarMsg(results.message);
       }
     }
@@ -281,9 +303,13 @@ const CartScreen: React.FC<CartScreenProps> = ({
             />
           </Box>
           <Divider />
-          <Button onClick={() => updateCartToDB(cart?._id || "")}>
+          <Button onClick={() => updateCartToDB(cart,cart?._id || "")}>
             Update Cart
           </Button>
+          <Divider />
+          <Typography sx={{ py: "10px", pl: "10px", backgroundColor:"red", color:"white", fontWeight:"600"}} variant="body1">
+            Total {calculatePrice()} $
+          </Typography>
         </Box>
       </Box>
 

@@ -47,12 +47,14 @@ export interface ProductsInDB {
   product: ProductItemDB;
   quantity: number;
 }
-export interface CartInDB {
-  _id: string;
-  cartDesc: string;
-  cartTax: number;
-  cartDiscount: number;
-  products: Array<ProductsInDB>;
+export class CartInDB {
+  constructor(public _id:string,public cartDesc:string, public cartTax:number, public cartDiscount:number,public products: Array<ProductsInDB>) {
+    this._id= _id;
+    this.cartDesc= cartDesc;
+    this.cartTax= cartTax;
+    this.cartDiscount= cartDiscount;
+    this.products= products;
+  }
 }
 export interface ProductObj {
   _id: string;

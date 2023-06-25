@@ -14,7 +14,7 @@ import CartScreen from "./CartScreen.tsx";
 import AddProductModal from "./AddProductModal.tsx";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { ProductItemDB, ProductObj, ProductToCart } from "../Types.tsx";
+import { CartInDB, ProductItemDB, ProductObj, fetchCartData } from "../Types.tsx";
 
 export interface Products {
   productId: string;
@@ -32,7 +32,7 @@ export default function Products() {
   const _token: string | null = localStorage.getItem("token") || "";
 
   const isProductInCart = (idx:string) => {
-    if(productsToCart.find(item => item.productId == idx)){
+    if(cart?.products.find(item => item.productId == idx)){
       return true;
     } else {
       return false;
@@ -40,7 +40,7 @@ export default function Products() {
   }
 
   const [isOpenAddProductModal, setIsOpenAddProductModal] = useState<boolean>(false);
-  
+  const [cart, setCart] = useState<CartInDB>()
 
   const [queryStrings, ] = useSearchParams();
   const indexOfCart = queryStrings.get("indexOfCart");
@@ -79,16 +79,26 @@ export default function Products() {
     setProducts(newProductsArr);
   };
 
+
+  const getCart = (_token: string, indexOfCart: string) => {
+    fetchCartData(_token)
+      .then((res: CartInDB[]) => res.find((cart) => cart._id == indexOfCart))
+      .then((response: CartInDB | undefined) => {
+        if (response) setCart(response);
+      });
+  };
   const addProductToCart=(product:ProductObj)=>{
     const {_id, productImg, productCode, ...toCart} = product;
     setProductsToCart([...productsToCart,{productId:_id, product:toCart,quantity:1 }])
   }
 
   const removeProductFromCart = (idx:string)=>{
-    const _newProductToCart:Products[] = productsToCart.filter((product)=>{
-      return product.productId != idx;
-    })
-    setProductsToCart(_newProductToCart)
+    if(cart?.products.length){
+      const _newProductToCart:Products[] = cart?.products.filter((product)=>{
+        return product.productId != idx;
+      })
+      setProductsToCart(_newProductToCart)
+    }
   }
 
 
@@ -132,7 +142,7 @@ export default function Products() {
                 avatar={
                   indexOfCart && 
                   <Button onClick={isProductInCart(product._id)? ()=>removeProductFromCart(product._id) :()=>addProductToCart(product)}>
-                    {isProductInCart(product._id) && productsToCart.find(item => item.productId == product._id) ? <ShoppingCartIcon/> :<ShoppingCartOutlinedIcon />}
+                    {isProductInCart(product._id) ? <ShoppingCartIcon/> :<ShoppingCartOutlinedIcon />}
                   </Button>
                 }
                 action={
@@ -246,7 +256,7 @@ export default function Products() {
             );
           })}
         </Box>
-        {indexOfCart && <CartScreen indexOfCart={indexOfCart} productsToCart={productsToCart} />}
+        {indexOfCart && <CartScreen cart={cart} setCart={setCart} getCart={getCart} indexOfCart={indexOfCart} productsToCart={productsToCart} />}
       </Box>
       {/* <Snackbar
         open={open}
