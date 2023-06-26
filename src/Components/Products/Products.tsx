@@ -9,40 +9,36 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AddProductModal from "./AddProductModal.tsx";
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Cart, Products, ProductObj } from "../Types.tsx";
+import styles from "./product.module.css";
 
 export interface ProductsProps {
-  // productId: string;
-  // product: ProductToCart;
-  // quantity: number;
-  cart:Cart|undefined;
-  setCart:(cart:Cart)=>void;
+  cart: Cart | undefined;
+  setCart: (cart: Cart) => void;
 }
-
-const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
+const ProductsComponent: React.FC<ProductsProps | any> = ({
+  cart,
+  setCart,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditting, setIsEditting] = useState<boolean>(false);
   const [products, setProducts] = useState<ProductObj[]>([]);
+  const [isOpenAddProductModal, setIsOpenAddProductModal] =
+    useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token") || "";
 
-  const isProductInCart = (idx:string) => {
-    if(cart?.products.find(item => item.productId == idx)){
+  const isProductInCart = (idx: string) => {
+    if (cart?.products.find((item: Products) => item.productId == idx)) {
       return true;
     } else {
       return false;
     }
-  }
-
-  const [isOpenAddProductModal, setIsOpenAddProductModal] = useState<boolean>(false);
-
-  const [queryStrings, ] = useSearchParams();
-  const indexOfCart = queryStrings.get("indexOfCart");
-
+  };
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -57,8 +53,6 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
   useEffect(() => {
     fetchData(_token);
   }, [_token]);
-
-
 
   const updateProductData = (idx: string, newText: string, key: string) => {
     let _newText: number | string;
@@ -76,26 +70,6 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
     });
     setProducts(newProductsArr);
   };
-
-
-  const addProductToCart=(product:ProductObj)=>{
-    const {_id, productImg, productCode, ...toCart} = product;
-    if(typeof cart !='undefined'){
-      const newProductsList = cart?.products ||[];
-      newProductsList.unshift({productId:_id, product:toCart,quantity:1 })
-      setCart({...cart, products:newProductsList})
-    }
-  }
-  const removeProductFromCart = (idx:string)=>{
-    if(typeof cart !='undefined' && cart?.products.length){
-      const newProductsList:Products[] = cart?.products.filter((product)=>{
-        return product.productId != idx;
-      })
-      setCart({...cart, products:newProductsList})
-    }
-  }
-
-
   const deleteProduct = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
@@ -110,11 +84,33 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
       alert(results.message);
     }
   };
+  const addProductToCart = (product: ProductObj) => {
+    const { _id, productImg, productCode, ...toCart } = product;
+    if (typeof cart != "undefined") {
+      const newProductsList = cart?.products || [];
+      newProductsList.unshift({ productId: _id, product: toCart, quantity: 1 });
+      setCart({ ...cart, products: newProductsList });
+    }
+  };
+  const removeProductFromCart = (idx: string) => {
+    if (typeof cart != "undefined" && cart?.products.length) {
+      const newProductsList: Products[] = cart?.products.filter(
+        (product: Products) => {
+          return product.productId != idx;
+        }
+      );
+      setCart({ ...cart, products: newProductsList });
+    }
+  };
+
   return (
-    <Box sx={{minHeight:"89vh", height:"100%"}} onClick={()=>setIsOpenAddProductModal(false)}>
+    <Box
+      sx={{ minHeight: "89vh", height: "100%" }}
+      onClick={() => setIsOpenAddProductModal(false)}
+    >
       <Button
         onClick={(e) => {
-          e.stopPropagation()
+          e.stopPropagation();
           setIsOpenAddProductModal(true);
         }}
       >
@@ -126,20 +122,31 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
           sx={{
             display: "flex",
             py: "10px",
-            width: indexOfCart ? "100%" : "100%",
+            width: "100%",
           }}
         >
           {products.map((product) => {
             return (
               <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
                 <CardHeader
-                avatar={
-                  cart && 
-                  <Button onClick={isProductInCart(product._id)? ()=>removeProductFromCart(product._id) :()=>addProductToCart(product)}>
-                    {isProductInCart(product._id) ? <ShoppingCartIcon/> :<ShoppingCartOutlinedIcon />}
-                  </Button>
-                }
-                action={
+                  avatar={
+                    cart && (
+                      <Button
+                        onClick={
+                          isProductInCart(product._id)
+                            ? () => removeProductFromCart(product._id)
+                            : () => addProductToCart(product)
+                        }
+                      >
+                        {isProductInCart(product._id) ? (
+                          <ShoppingCartIcon />
+                        ) : (
+                          <ShoppingCartOutlinedIcon />
+                        )}
+                      </Button>
+                    )
+                  }
+                  action={
                     <IconButton
                       aria-label="delete"
                       sx={{ p: "2px" }}
@@ -157,13 +164,7 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
                   image={product.productImg}
                   alt={product.productName}
                 />
-                <CardContent
-                  sx={{
-                    p: 0,
-                    mx: 1,
-                    pt: "10px",
-                  }}
-                >
+                <CardContent sx={{ p: 0, mx: 1, pt: "10px" }}>
                   <Typography
                     variant="body1"
                     sx={{
@@ -260,5 +261,5 @@ const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
       /> */}
     </Box>
   );
-}
+};
 export default ProductsComponent;

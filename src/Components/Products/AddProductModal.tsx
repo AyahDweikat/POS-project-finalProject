@@ -90,8 +90,6 @@ function AddProductModal() {
           handleBlur,
           handleSubmit,
           // handleFileUpload,
-          // isSubmitting,
-          /* and other goodies */
         }) => (
           <form
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
