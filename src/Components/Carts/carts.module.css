@@ -1,0 +1,62 @@
+.cartSideBar {
+  height: 90vh;
+  background-color: white;
+  width: 25%;
+  border-radius: 8px;
+  margin-top: -20px;
+  padding-inline: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+.closeBtn {
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  padding-inline: 4px;
+  padding-block: 1px;
+  position: absolute;
+  top: 10px;
+  left: -10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.productItem {
+  background-color: #eee5e5;
+  margin: 0px;
+  padding: 0;
+  margin-bottom: 15px;
+  position: relative;
+}
+.deleteBtn {
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  padding-inline: 4px;
+  padding-block: 1px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  border-radius: 50%;
+  font-size: 10px;
+  cursor: pointer;
+}
+.totalPrice {
+  padding-block: 10px;
+  padding-left: 10px;
+  background-color: red;
+  color: white;
+  font-weight: 600;
+}
+.productData {
+  margin-left: 20px;
+  margin-right: 8px;
+  text-transform: capitalize;
+  outline: none;
+}
+.cartData{
+    text-transform: capitalize;
+    text-align: left;
+}

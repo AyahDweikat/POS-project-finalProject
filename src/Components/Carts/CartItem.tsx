@@ -7,33 +7,29 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
-import {  Divider, Button, Snackbar } from "@mui/material";
+import { Divider, Button, Snackbar } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Cart } from "../Types";
-import { useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
-
-
-
-
+import { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import styles from './carts.module.css';
 interface CartItemProps {
   cart: Cart;
   _token: string;
   fetchData: (id: string) => void;
-  openCart:(idx:string) => void;
+  openCart: (idx: string) => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({
   cart,
   _token,
   fetchData,
-  openCart
+  openCart,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
-
   const deleteCart = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
@@ -49,18 +45,17 @@ const CartItem: React.FC<CartItemProps> = ({
       handleShowSnackBar();
       setSnackBarMsg(results.message);
     }
-  };//
-
+  };
   const handleShowSnackBar = () => {
     setOpen(true);
-  };//
+  };
   const action = (
     <React.Fragment>
       <IconButton
         size="small"
         aria-label="close"
         color="inherit"
-        onClick={()=>setOpen(false)}
+        onClick={() => setOpen(false)}
       >
         <CloseIcon fontSize="small" />
       </IconButton>
@@ -68,56 +63,46 @@ const CartItem: React.FC<CartItemProps> = ({
   );
   return (
     <>
-    <Card key={cart._id} sx={{ maxWidth: '260px', m: "10px" }}>
-      <CardHeader
-        action={
-          <IconButton
-            aria-label="delete"
-            sx={{ p: "2px" }}
-            onClick={() => deleteCart(cart._id)}
+      <Card key={cart._id} sx={{ maxWidth: "260px", m: "10px" }}>
+        <CardHeader
+          action={
+            <IconButton
+              aria-label="delete"
+              sx={{ p: "2px" }}
+              onClick={() => deleteCart(cart._id)}
+            >
+              <DeleteForeverRoundedIcon />
+            </IconButton>
+          }
+          subheader={cart.cartDesc}
+        />
+        <CardContent sx={{ p: 0, mx: 1, pt: "10px" }}>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            id="cartDiscount"
+            className={styles.cartData}
           >
-            <DeleteForeverRoundedIcon />
-          </IconButton>
-        }
-        subheader={cart.cartDesc}
-      />
-      <CardContent
-        sx={{
-          p: 0,
-          mx: 1,
-          pt: "10px",
-        }}
-      >
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          id="cartDiscount"
-          sx={{
-            textTransform: "capitalize",
-            textAlign: "left",
-          }}
-        >
-          Discount: {cart.cartDiscount}
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          id="cartTax"
-          sx={{
-            textTransform: "capitalize",
-            textAlign: "left",
-          }}
-        >
-          Tax: {cart.cartTax}
-        </Typography>
-      </CardContent>
-      <Divider />
-      <Button onClick={()=>openCart(cart._id)}>View More & Edit Cart</Button>
-    </Card>
-    <Snackbar
+            Discount: {cart.cartDiscount}
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            id="cartTax"
+            className={styles.cartData}
+          >
+            Tax: {cart.cartTax}
+          </Typography>
+        </CardContent>
+        <Divider />
+        <Button onClick={() => openCart(cart._id)}>
+          View More & Edit Cart
+        </Button>
+      </Card>
+      <Snackbar
         open={open}
         autoHideDuration={6000}
-        onClose={()=>setOpen(false)}
+        onClose={() => setOpen(false)}
         message={snackBarMsg}
         action={action}
       />

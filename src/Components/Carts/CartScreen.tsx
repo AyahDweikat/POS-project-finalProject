@@ -2,14 +2,12 @@
 import { Box, Typography, Snackbar, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { ListItemText, ListItem, IconButton } from "@mui/material";
-// import { fetchApiWithAuthAndBody } from "../fetchApi";
 import CloseIcon from "@mui/icons-material/Close";
 import { Cart, Products } from "../Types";
 import { Divider } from "@mui/material";
 import { Button } from "@mui/material";
 import { fetchApiWithAuthAndBody } from "../fetchApi";
-// import { useLocation, useNavigate } from "react-router-dom";
-
+import styles from "./carts.module.css";
 interface CartScreenProps {
   setIsCartOpenWidely: (state: boolean) => void;
   cart: Cart | undefined;
@@ -23,11 +21,9 @@ const CartScreen: React.FC<CartScreenProps> = ({
   const [open, setOpen] = useState<boolean>(false);
   const _token: string = localStorage.getItem("token") || "";
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-
-  async function updateCartToDB(_cart: Cart | undefined = cart, idx: string) {
+  async function updateCartToDB(_cart: Cart | undefined = cart) {
     if (typeof cart != "undefined") {
       const { _id, ...newCart } = cart;
-      console.log(newCart);
       const results = await fetchApiWithAuthAndBody(
         "POST",
         newCart,
@@ -77,7 +73,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
       setCart(_cart);
     }
   };
-
   const updateCartData = async (newText: string, key: string) => {
     let _newText: string | number;
     if (key == "cartTax" || key == "cartDiscount") {
@@ -96,9 +91,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
       setCart(_cart);
     }
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
+  const handleShowSnackBar = () => setOpen(true);
   const deleteProduct = async (idx: string) => {
     if (typeof cart != "undefined" && cart?.products.length) {
       const newProductsList: Products[] = cart?.products.filter((product) => {
@@ -123,21 +116,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
 
   return (
     <>
-      <Box
-        sx={{
-          height: "90vh",
-          backgroundColor: "white",
-          width: "25%",
-          borderRadius: "8px",
-          mt: "-20px",
-          px: "20px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          boxShadow:
-            "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
-        }}
-      >
+      <Box className={styles.cartSideBar}>
         <Box>
           <Box
             sx={{
@@ -147,21 +126,16 @@ const CartScreen: React.FC<CartScreenProps> = ({
             }}
           >
             <Typography
-              sx={{
-                border: "1px solid black",
-                backgroundColor: "white",
-                color: "black",
-                px: "4px",
-                py: "1px",
-                position: "absolute",
-                top: "10px",
-                left: "-10px",
-                fontSize: "15px",
-                cursor: "pointer",
-              }}
-              onClick={() =>{
-                setIsCartOpenWidely(false)
-                setCart({_id:"", cartDesc:"", cartTax:0, cartDiscount:0,products:[]})
+              className={styles.closeBtn}
+              onClick={() => {
+                setIsCartOpenWidely(false);
+                setCart({
+                  _id: "",
+                  cartDesc: "",
+                  cartTax: 0,
+                  cartDiscount: 0,
+                  products: [],
+                });
               }}
             >
               X
@@ -181,19 +155,12 @@ const CartScreen: React.FC<CartScreenProps> = ({
               value={cart?.cartDesc || ""}
             />
           </Box>
-
           <Box>
             {cart?.products?.map((product) => {
               return (
                 <ListItem
                   key={product?.productId}
-                  sx={{
-                    backgroundColor: "#eee5e5",
-                    m: "0px",
-                    p: "0",
-                    mb: "15px",
-                    position: "relative",
-                  }}
+                  className={styles.productItem}
                   secondaryAction={
                     <Typography
                       sx={{
@@ -208,19 +175,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
                 >
                   <Box>
                     <Typography
-                      sx={{
-                        border: "1px solid black",
-                        backgroundColor: "black",
-                        color: "white",
-                        px: "4px",
-                        py: "1px",
-                        position: "absolute",
-                        top: "-10px",
-                        right: "-10px",
-                        borderRadius: "50%",
-                        fontSize: "10px",
-                        cursor: "pointer",
-                      }}
+                      className={styles.deleteBtn}
                       onClick={() => deleteProduct(product.productId)}
                     >
                       X
@@ -238,12 +193,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
                     variant="standard"
                   />
                   <ListItemText
-                    sx={{
-                      ml: "20px",
-                      mr: "8px",
-                      textTransform: "capitalize",
-                      outline: "none",
-                    }}
+                    className={styles.productData}
                     secondary={product?.product.productPrice + " $"}
                   >
                     {product?.product?.productName}
@@ -253,7 +203,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
             })}
           </Box>
         </Box>
-
         <Box sx={{ justifySelf: "flex-end" }}>
           <Divider />
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -286,25 +235,13 @@ const CartScreen: React.FC<CartScreenProps> = ({
             />
           </Box>
           <Divider />
-          <Button onClick={() => updateCartToDB(cart, cart?._id || "")}>
-            Checkout
-          </Button>
+          <Button onClick={() => updateCartToDB(cart)}>Checkout</Button>
           <Divider />
-          <Typography
-            sx={{
-              py: "10px",
-              pl: "10px",
-              backgroundColor: "red",
-              color: "white",
-              fontWeight: "600",
-            }}
-            variant="body1"
-          >
+          <Typography className={styles.totalPrice} variant="body1">
             Total {calculatePrice()} $
           </Typography>
         </Box>
       </Box>
-
       <Snackbar
         open={open}
         autoHideDuration={6000}

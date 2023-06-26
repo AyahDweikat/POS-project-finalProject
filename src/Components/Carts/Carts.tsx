@@ -12,7 +12,6 @@ function Carts() {
   const [cartToOpen, setCartToOpen] = useState<Cart>();
   const _token: string | null = localStorage.getItem("token") || "";
   const [isCartOpenWidely, setIsCartOpenWidely] = useState<boolean>(false);
-
   const addNewCart = () => {
     const newCart:Cart = {_id:nanoid(), cartDesc:"", cartTax:0, cartDiscount:0, products:[]};
     setCarts([newCart, ...carts])
@@ -24,7 +23,7 @@ function Carts() {
     setCartToOpen(_cartToOpen);
     setIsCartOpenWidely(false);
     setIsCartOpenWidely(true);
-  }; //
+  }; 
   useEffect(()=>{
     if(typeof cartToOpen !=='undefined'){
       const _cartToOpen: Cart[]= carts?.map((cart) => {
@@ -37,7 +36,6 @@ function Carts() {
       setCarts(_cartToOpen)
     }
   }, [cartToOpen])
-
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",

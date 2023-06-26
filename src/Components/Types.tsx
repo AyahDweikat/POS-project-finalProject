@@ -1,5 +1,3 @@
-import { fetchApiWithAuthNoBody } from "./fetchApi";
-
 export type UnitObj = {
   _id: string;
   unitOfMeasure: string;
