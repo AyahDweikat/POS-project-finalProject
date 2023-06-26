@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { GlobalContext } from './../../Context/context.tsx';
 
-// const cat = localStorage.getItem("myCat");
-// localStorage.removeItem("myCat");
 function Layout({ children }:{children: React.ReactNode}) {
   const [user, setUser] = useState<string>("");
   const [token, setToken] = useState<string>("");

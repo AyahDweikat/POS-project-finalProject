@@ -4,7 +4,6 @@ import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './Components/ErrorPage.tsx';
 import Carts from './Components/Carts/Carts.tsx';
-import Products from './Components/Products/Products.tsx';
 import Categories from './Components/Categories/Categories.tsx';
 import Units from './Components/UnitsOfMeasure/Units.tsx';
 import Signup from './Components/Signup/Signup.tsx';
@@ -14,6 +13,7 @@ import IsAuth from './Components/IsAuth/IsAuth.tsx';
 import RequireAuth from './Components/RequireAuth/RequireAuth.tsx';
 import Profile from './Components/Profile/Profile.tsx';
 import App from './App.tsx';
+import ProductsComponent from './Components/Products/Products.tsx';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
           },
           {
             path: "products",
-            element:<RequireAuth><Products/></RequireAuth>,
+            element:<RequireAuth><ProductsComponent /></RequireAuth>,
           },
           {
             path: "categories",
