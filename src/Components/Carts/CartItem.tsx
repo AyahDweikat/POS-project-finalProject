@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useContext } from "react";
+import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -7,12 +7,9 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
-import { Checkbox, Divider, Button, Snackbar } from "@mui/material";
-// import ListItem from "@mui/material/ListItem";
-// import ListItemText from "@mui/material/ListItemText";
+import {  Divider, Button, Snackbar } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { GlobalContext } from "../../Context/context";
-import { CartInDB } from "../Types";
+import { Cart } from "../Types";
 import { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -20,24 +17,22 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 interface CartItemProps {
-  cart: CartInDB;
+  cart: Cart;
   _token: string;
   fetchData: (id: string) => void;
+  openCart:(idx:string) => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({
   cart,
   _token,
   fetchData,
+  openCart
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
-  const {neededObj} = useContext(GlobalContext)
-
-
-  
 
   const deleteCart = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
@@ -56,11 +51,6 @@ const CartItem: React.FC<CartItemProps> = ({
     }
   };//
 
-  const openCart =(cart:CartInDB)=>{
-    neededObj.cart = cart;
-    navigate(`/products?indexOfCart=${cart._id}`)
-  }//
-  
   const handleShowSnackBar = () => {
     setOpen(true);
   };//
@@ -78,9 +68,8 @@ const CartItem: React.FC<CartItemProps> = ({
   );
   return (
     <>
-    <Card key={cart._id} sx={{ maxWidth: 400, m: "10px" }}>
+    <Card key={cart._id} sx={{ maxWidth: '260px', m: "10px" }}>
       <CardHeader
-        avatar={<Checkbox sx={{ color: "black" }} checked={true} />}
         action={
           <IconButton
             aria-label="delete"
@@ -90,8 +79,7 @@ const CartItem: React.FC<CartItemProps> = ({
             <DeleteForeverRoundedIcon />
           </IconButton>
         }
-        title={"Code:"}
-        subheader={cart._id}
+        subheader={cart.cartDesc}
       />
       <CardContent
         sx={{
@@ -100,20 +88,6 @@ const CartItem: React.FC<CartItemProps> = ({
           pt: "10px",
         }}
       >
-        <Typography
-          variant="body1"
-          sx={{
-            textAlign: "left",
-            fontSize: "18px",
-            p: 0,
-            m: 0,
-            textTransform: "capitalize",
-          }}
-          color="text.primary"
-          id="cartDesc"
-        >
-          Description: {cart.cartDesc}
-        </Typography>
         <Typography
           variant="body1"
           color="text.secondary"
@@ -138,7 +112,7 @@ const CartItem: React.FC<CartItemProps> = ({
         </Typography>
       </CardContent>
       <Divider />
-      <Button onClick={()=>openCart(cart)}>View More & Edit Cart</Button>
+      <Button onClick={()=>openCart(cart._id)}>View More & Edit Cart</Button>
     </Card>
     <Snackbar
         open={open}

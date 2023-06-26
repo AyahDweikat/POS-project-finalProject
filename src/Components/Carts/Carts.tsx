@@ -1,22 +1,43 @@
 import { Box } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import CartItem from "./CartItem";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { GlobalContext } from "../../Context/context";
-import { CartInDB, fetchCartData } from "../Types";
-
+import { Button, Typography } from "@mui/material";
+import { Cart } from "../Types";
+import CartScreen from "./CartScreen";
+import Products from '../Products/Products';
+import { nanoid } from "nanoid";
 function Carts() {
-  const [carts, setCarts] = useState<CartInDB[]>([]);
+  const [carts, setCarts] = useState<Cart[]>([]);
+  const [cartToOpen, setCartToOpen] = useState<Cart>();
   const _token: string | null = localStorage.getItem("token") || "";
-  const navigate = useNavigate();
-  const { neededObj } = useContext(GlobalContext);
+  const [isCartOpenWidely, setIsCartOpenWidely] = useState<boolean>(false);
 
   const addNewCart = () => {
-    neededObj.cart = {};
-    navigate("/products?isCartOpen=true");
+    const newCart:Cart = {_id:nanoid(), cartDesc:"", cartTax:0, cartDiscount:0, products:[]};
+    setCarts([newCart, ...carts])
   };
+  const openCart = (idx: string) => {
+    const _cartToOpen: Cart | undefined = carts?.find(
+      (cart) => cart._id == idx
+    );
+    setCartToOpen(_cartToOpen);
+    setIsCartOpenWidely(false);
+    setIsCartOpenWidely(true);
+  }; //
+  useEffect(()=>{
+    if(typeof cartToOpen !=='undefined'){
+      const _cartToOpen: Cart[]= carts?.map((cart) => {
+        if(cart._id == cartToOpen._id){
+          return cartToOpen;
+        } else {
+          return cart;
+        }
+      });
+      setCarts(_cartToOpen)
+    }
+  }, [cartToOpen])
+
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -29,25 +50,39 @@ function Carts() {
     return results;
   };
   useEffect(() => {
-    fetchCartData(_token).then(response => setCarts(response));
+    fetchData(_token);
   }, [_token]);
   return (
     <>
-      <Box>
+    <Box sx={{display:"flex", justifyContent:"space-between"}}>
+      <Box sx={{ width: "280px", borderRight: "1px solid grey" }}>
+        <Typography variant="body1">Carts List</Typography>
         <Button onClick={() => addNewCart()}>Add New Cart</Button>
+        <Box>
+          {carts.map((cart) => {
+            return (
+              <CartItem
+                openCart={openCart}
+                key={cart._id}
+                _token={_token}
+                cart={cart}
+                fetchData={fetchData}
+              />
+            );
+          })}
+        </Box>
       </Box>
       <Box>
-        {carts.map((cart) => {
-          return (
-            <CartItem
-              key={cart._id}
-              _token={_token}
-              cart={cart}
-              fetchData={fetchData}
-            />
-          );
-        })}
+        <Products cart={cartToOpen} setCart={setCartToOpen} />
       </Box>
+      {isCartOpenWidely && (
+        <CartScreen
+          cart={cartToOpen}
+          setCart={setCartToOpen}
+          setIsCartOpenWidely={setIsCartOpenWidely}
+        />
+      )}
+    </Box>
     </>
   );
 }

@@ -10,25 +10,24 @@ import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import CartScreen from "./CartScreen.tsx";
 import AddProductModal from "./AddProductModal.tsx";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { CartInDB, ProductItemDB, ProductObj, fetchCartData } from "../Types.tsx";
+import { Cart, Products, ProductObj } from "../Types.tsx";
 
-export interface Products {
-  productId: string;
-  product: ProductItemDB;
-  quantity: number;
+export interface ProductsProps {
+  // productId: string;
+  // product: ProductToCart;
+  // quantity: number;
+  cart:Cart|undefined;
+  setCart:(cart:Cart)=>void;
 }
 
-
-export default function Products() {
+const ProductsComponent: React.FC<ProductsProps> = ({cart, setCart}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditting, setIsEditting] = useState<boolean>(false);
   const [products, setProducts] = useState<ProductObj[]>([]);
-  const [productsToCart, setProductsToCart] = useState<Products[]>([])
   const _token: string | null = localStorage.getItem("token") || "";
 
   const isProductInCart = (idx:string) => {
@@ -40,7 +39,6 @@ export default function Products() {
   }
 
   const [isOpenAddProductModal, setIsOpenAddProductModal] = useState<boolean>(false);
-  const [cart, setCart] = useState<CartInDB>()
 
   const [queryStrings, ] = useSearchParams();
   const indexOfCart = queryStrings.get("indexOfCart");
@@ -80,24 +78,20 @@ export default function Products() {
   };
 
 
-  const getCart = (_token: string, indexOfCart: string) => {
-    fetchCartData(_token)
-      .then((res: CartInDB[]) => res.find((cart) => cart._id == indexOfCart))
-      .then((response: CartInDB | undefined) => {
-        if (response) setCart(response);
-      });
-  };
   const addProductToCart=(product:ProductObj)=>{
     const {_id, productImg, productCode, ...toCart} = product;
-    setProductsToCart([...productsToCart,{productId:_id, product:toCart,quantity:1 }])
+    if(typeof cart !='undefined'){
+      const newProductsList = cart?.products ||[];
+      newProductsList.unshift({productId:_id, product:toCart,quantity:1 })
+      setCart({...cart, products:newProductsList})
+    }
   }
-
   const removeProductFromCart = (idx:string)=>{
-    if(cart?.products.length){
-      const _newProductToCart:Products[] = cart?.products.filter((product)=>{
+    if(typeof cart !='undefined' && cart?.products.length){
+      const newProductsList:Products[] = cart?.products.filter((product)=>{
         return product.productId != idx;
       })
-      setProductsToCart(_newProductToCart)
+      setCart({...cart, products:newProductsList})
     }
   }
 
@@ -140,7 +134,7 @@ export default function Products() {
               <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
                 <CardHeader
                 avatar={
-                  indexOfCart && 
+                  cart && 
                   <Button onClick={isProductInCart(product._id)? ()=>removeProductFromCart(product._id) :()=>addProductToCart(product)}>
                     {isProductInCart(product._id) ? <ShoppingCartIcon/> :<ShoppingCartOutlinedIcon />}
                   </Button>
@@ -256,7 +250,6 @@ export default function Products() {
             );
           })}
         </Box>
-        {indexOfCart && <CartScreen cart={cart} setCart={setCart} getCart={getCart} indexOfCart={indexOfCart} productsToCart={productsToCart} />}
       </Box>
       {/* <Snackbar
         open={open}
@@ -268,3 +261,4 @@ export default function Products() {
     </Box>
   );
 }
+export default ProductsComponent;

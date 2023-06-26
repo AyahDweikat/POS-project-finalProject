@@ -35,27 +35,6 @@ export interface CategoryObj {
 export interface Category {
   category: string;
 }
-export interface ProductItemDB {
-  productName: string;
-  productCategory: string;
-  productPrice: number;
-  measureUnit: string;
-}
-export interface ProductsInDB {
-  _id: string;
-  productId: string;
-  product: ProductItemDB;
-  quantity: number;
-}
-export class CartInDB {
-  constructor(public _id:string,public cartDesc:string, public cartTax:number, public cartDiscount:number,public products: Array<ProductsInDB>) {
-    this._id= _id;
-    this.cartDesc= cartDesc;
-    this.cartTax= cartTax;
-    this.cartDiscount= cartDiscount;
-    this.products= products;
-  }
-}
 export interface ProductObj {
   _id: string;
   productName: string;
@@ -73,35 +52,31 @@ export interface ProductInputObj {
   productPrice: number;
   measureUnit: string;
 }
+
+export class Cart {
+  constructor(
+    public _id: string,
+    public cartDesc: string,
+    public cartTax: number,
+    public cartDiscount: number,
+    public products: Array<Products>
+  ) {
+    this._id = _id;
+    this.cartDesc = cartDesc;
+    this.cartTax = cartTax;
+    this.cartDiscount = cartDiscount;
+    this.products = products;
+  }
+}
+export interface Products {
+  productId: string;
+  product: ProductToCart;
+  quantity: number;
+}
 export interface ProductToCart {
   productName: string;
   productCategory: string;
   productPrice: number;
   measureUnit: string;
 }
-export interface Products {
-  productId: string;
-  product: ProductItemDB;
-  quantity: number;
-}
-export interface Cart {
-  cartDesc: string;
-  cartTax: number;
-  cartDiscount: number;
-  products: Array<Products>;
-}
 
-
-
-export const fetchCartData = async (_token: string) => {
-  const results = await fetchApiWithAuthNoBody(
-    "GET",
-    `https://posapp.onrender.com/cart/getCarts`,
-    `black__${_token}`
-  );
-  if (results.CartList) {
-    // setCarts(results.CartList);
-    return results.CartList
-  }
-  return results;
-};
