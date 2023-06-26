@@ -1,3 +1,9 @@
+.unitsPage {
+  margin-top: 10px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  padding-block: 20px;
+}
 .edittingUnits {
   text-transform: capitalize;
   outline: none;

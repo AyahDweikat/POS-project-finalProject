@@ -129,14 +129,11 @@ export default function Units() {
   return (
     <>
       <Box
+      className={styles.unitsPage}
         sx={{
-          mt: 10,
-          border: "1px solid grey",
-          borderRadius: "8px",
           width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
           maxWidth: "665px",
           mx: "auto",
-          py: "20px",
         }}
       >
         <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
