@@ -4,11 +4,8 @@ import { fetchApi } from "./../fetchApi.ts";
 import { useNavigate } from "react-router-dom";
 import { SignUpObj } from "../Types.tsx";
 
-
-
 function Signup() {
   const navigate = useNavigate();
-
   const handleSignup = async (values: SignUpObj) => {
     const results = await fetchApi(
       "POST",
@@ -64,8 +61,6 @@ function Signup() {
           handleChange,
           handleBlur,
           handleSubmit,
-          // isSubmitting,
-          /* and other goodies */
         }) => (
           <form
             onSubmit={(e) => {

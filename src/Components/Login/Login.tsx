@@ -22,7 +22,6 @@ function Login() {
       navigate('/Carts');
     }
   };
-
   return (
     <>
       <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
@@ -57,8 +56,6 @@ function Login() {
           handleChange,
           handleBlur,
           handleSubmit,
-          // isSubmitting,
-          /* and other goodies */
         }) => (
           <form
             onSubmit={(e) => {
