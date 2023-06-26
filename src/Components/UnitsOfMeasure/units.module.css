@@ -1,0 +1,8 @@
+.edittingUnits {
+  text-transform: capitalize;
+  outline: none;
+}
+.unitsTable {
+  margin-top: 3px;
+  border: 1px solid grey;
+}

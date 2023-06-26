@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -18,7 +17,7 @@ import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
 import { InputsObj, UnitObj } from "../Types";
-
+import styles from './units.module.css'
 
 
 
@@ -106,9 +105,7 @@ export default function Units() {
       setSnackBarMsg(results.message);
     }
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
+  const handleShowSnackBar = () => setOpen(true);
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -178,8 +175,6 @@ export default function Units() {
             handleChange,
             handleBlur,
             handleSubmit,
-            // isSubmitting,
-            /* and other goodies */
           }) => (
             <form
               onSubmit={(e) => {
@@ -276,11 +271,10 @@ export default function Units() {
       </Box>
       <TableContainer
         component={Paper}
+        className={styles.unitsTable}
         sx={{
-          mt: 3,
           width: { xs: "90%", lg: "60%" },
           mx: "auto",
-          border: "1px solid grey",
         }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -296,7 +290,6 @@ export default function Units() {
             {units.map((row) => (
               <TableRow
                 key={row._id}
-                // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 sx={{ borderBottom: 1 }}
               >
                 <TableCell
@@ -310,11 +303,8 @@ export default function Units() {
                     updateUnitCells(row._id, e.target.innerText, e.target.id);
                     setIsEditting(false);
                   }}
-                  sx={{
-                    textTransform: "capitalize",
-                    outline: "none",
-                    borderBottom: isEditting ? "1px solid grey" : "0px",
-                  }}
+                  className={styles.edittingUnits}
+                  sx={{ borderBottom: isEditting ? "1px solid grey" : "0px"}}
                 >
                   {row.unitOfMeasure}
                 </TableCell>
@@ -328,11 +318,8 @@ export default function Units() {
                     updateUnitCells(row._id, e.target.innerText, e.target.id);
                     setIsEditting(false);
                   }}
-                  sx={{
-                    textTransform: "capitalize",
-                    outline: "none",
-                    borderBottom: isEditting ? "1px solid grey" : "0px",
-                  }}
+                  className={styles.edittingUnits}
+                  sx={{ borderBottom: isEditting ? "1px solid grey" : "0px"}}
                 >
                   {row.baseUnit}
                 </TableCell>
@@ -346,11 +333,8 @@ export default function Units() {
                     updateUnitCells(row._id, e.target.innerText, e.target.id);
                     setIsEditting(false);
                   }}
-                  sx={{
-                    textTransform: "capitalize",
-                    outline: "none",
-                    borderBottom: isEditting ? "1px solid grey" : "0px",
-                  }}
+                  className={styles.edittingUnits}
+                  sx={{ borderBottom: isEditting ? "1px solid grey" : "0px"}}
                 >
                   {row.conversionFactor}
                 </TableCell>
