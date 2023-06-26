@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import {Box} from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, TextField, Box } from "@mui/material";
 import { Formik } from "formik";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,7 +17,7 @@ import {
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
 import { Category, CategoryObj } from "../Types.tsx";
-
+import styles from './category.module.css'
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -107,15 +106,9 @@ export default function Categories() {
       setSnackBarMsg(results.message);
     }
   };
-
-
-
-
-
   const handleShowSnackBar = () => {
     setOpen(true);
   };
-
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -123,7 +116,6 @@ export default function Categories() {
 
     setOpen(false);
   };
-
   const action = (
     <React.Fragment>
       <IconButton
@@ -137,20 +129,10 @@ export default function Categories() {
     </React.Fragment>
   );
 
-
-  
   return (
     <>
-      <Box
-        sx={{
-          mt: 10,
-          border: "1px solid grey",
-          borderRadius: "8px",
-          width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
-          maxWidth: "665px",
-          mx: "auto",
-          py: "20px",
-        }}
+      <Box className={styles.addCategoryForm}
+        sx={{ width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" }}}
       >
         <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
           Add Category Form
@@ -178,8 +160,6 @@ export default function Categories() {
             handleChange,
             handleBlur,
             handleSubmit,
-            // isSubmitting,
-            /* and other goodies */
           }) => (
             <form
               onSubmit={(e) => {
@@ -222,17 +202,8 @@ export default function Categories() {
           )}
         </Formik>
       </Box>
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: 360,
-          bgcolor: "background.paper",
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-        }}
-      >
-        <List sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+      <Box className={styles.categoryList}>
+        <List className={styles.categoryList}>
           {categories.map((category) => {
             return (
               <ListItem
@@ -258,11 +229,8 @@ export default function Categories() {
                     updateCategory(category._id, e.target.innerText);
                     setIsEditting(false);
                   }}
-                  sx={{
-                    textTransform: "capitalize",
-                    outline: "none",
-                    borderBottom: isEditting ? "1px solid grey" : "0px",
-                  }}
+                  className={styles.edittingCategory}
+                  sx={{ borderBottom: isEditting ? "1px solid grey" : "0px"}}
                 >
                   {category.category}
                 </ListItemText>

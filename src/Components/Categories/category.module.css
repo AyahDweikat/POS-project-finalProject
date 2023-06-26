@@ -1,3 +1,23 @@
-List {
+/* list {
     display: flex;
+} */
+.addCategoryForm {
+  margin-top: 10px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  max-width: 665px;
+  margin-inline: auto;
+  padding-block: 20px;
+}
+
+.categoryList {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.edittingCategory {
+  text-transform: capitalize;
+  outline: none;
 }
