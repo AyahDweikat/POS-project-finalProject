@@ -1,0 +1,12 @@
+.addModal {
+    margin-top: 0px;
+    border: 1px solid grey;
+    border-radius: 8px;
+    max-width: 665px;
+    height:75vh;
+    background-color:white;
+    margin-inline: auto;
+    padding-block: 15px;
+    margin:auto;
+    z-index:6;
+}
