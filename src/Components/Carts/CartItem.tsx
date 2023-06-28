@@ -7,12 +7,12 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
-import { Divider, Button, Snackbar } from "@mui/material";
+import { Divider, Button } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Cart } from "../Types";
 import { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import styles from './carts.module.css';
+import SnackbarComponent from "../../SubComponents/Snackbar";
 interface CartItemProps {
   cart: Cart;
   _token: string;
@@ -26,7 +26,6 @@ const CartItem: React.FC<CartItemProps> = ({
   fetchData,
   openCart,
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,28 +38,11 @@ const CartItem: React.FC<CartItemProps> = ({
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      handleShowSnackBar();
       setSnackBarMsg("Cart deleted Successfully");
     } else {
-      handleShowSnackBar();
       setSnackBarMsg(results.message);
     }
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={() => setOpen(false)}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
   return (
     <>
       <Card key={cart._id} sx={{ maxWidth: "260px", m: "10px" }}>
@@ -99,13 +81,7 @@ const CartItem: React.FC<CartItemProps> = ({
           View More & Edit Cart
         </Button>
       </Card>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-        message={snackBarMsg}
-        action={action}
-      />
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 };

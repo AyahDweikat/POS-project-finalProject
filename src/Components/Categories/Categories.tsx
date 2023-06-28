@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -14,16 +14,15 @@ import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
 } from "../fetchApi.ts";
-import Snackbar from '@mui/material/Snackbar';
-import CloseIcon from '@mui/icons-material/Close';
 import { Category, CategoryObj } from "../Types.tsx";
 import styles from './category.module.css'
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+
 
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
   const [categories, setCategories] = useState<CategoryObj[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [isEditting, setIsEditting] = useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token")||"";
@@ -51,10 +50,8 @@ export default function Categories() {
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      handleShowSnackBar()
       setSnackBarMsg("Category deleted Successfully");
     } else {
-      handleShowSnackBar()
       setSnackBarMsg(results.message);
     }
   };
@@ -73,10 +70,8 @@ export default function Categories() {
       navigate(location.pathname);
       if (results.message == "successs") {
         fetchData(_token);
-        handleShowSnackBar()
         setSnackBarMsg("Category Added Successfully");
       } else {
-        handleShowSnackBar()
         setSnackBarMsg(results.message);
       }
     }
@@ -99,35 +94,11 @@ export default function Categories() {
     navigate(location.pathname);
     if (results.message == "successs updated") {
       fetchData(_token);
-      handleShowSnackBar()
       setSnackBarMsg("Category updated Successfully");
     } else {
-      handleShowSnackBar()
       setSnackBarMsg(results.message);
     }
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
 
   return (
     <>
@@ -239,13 +210,7 @@ export default function Categories() {
           })}
         </List>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackBarMsg}
-        action={action}
-      />
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 }

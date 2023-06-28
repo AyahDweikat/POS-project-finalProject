@@ -3,9 +3,7 @@ import {
   Button,
   TextField,
   Box,
-  Typography,
-  IconButton,
-  Snackbar,
+  Typography
 } from "@mui/material";
 import { Formik } from "formik";
 import styles from "./product.module.css";
@@ -13,7 +11,8 @@ import { ProductInputObj } from "../Types";
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { fetchApiWithAuthAndBody } from "../fetchApi";
-import CloseIcon from "@mui/icons-material/Close";
+import SnackbarComponent from "../../SubComponents/Snackbar";
+
 
 interface addProductModalProps {
   fetchData: (token: string) => void;
@@ -24,7 +23,6 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
   const [file, setFile] = useState<File>();
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const _token: string | null = localStorage.getItem("token") || "";
-  const [open, setOpen] = useState<boolean>(false);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
@@ -73,42 +71,16 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
           console.log(results.message);
           setIsOpenAddProductModal(false)
           setSnackBarMsg("Product Added Successfully");
-          handleShowSnackBar()
         } else {
           console.log(results);
           setIsOpenAddProductModal(false)
           setSnackBarMsg(results.message);
-          handleShowSnackBar()
         }
       })
       .catch((error) => {
         return `${error}`;
       });
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
 
   return (
     <>
@@ -356,13 +328,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
           )}
         </Formik>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackBarMsg}
-        action={action}
-      />
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 };

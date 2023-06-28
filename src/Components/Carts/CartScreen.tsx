@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Typography, Snackbar, TextField } from "@mui/material";
+import { Box, Typography, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { ListItemText, ListItem, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { ListItemText, ListItem } from "@mui/material";
 import { Cart, Products } from "../Types";
 import { Divider } from "@mui/material";
 import { Button } from "@mui/material";
 import { fetchApiWithAuthAndBody } from "../fetchApi";
 import styles from "./carts.module.css";
+import SnackbarComponent from "../../SubComponents/Snackbar";
+
+
 interface CartScreenProps {
   setIsCartOpenWidely: (state: boolean) => void;
   cart: Cart | undefined;
@@ -18,7 +20,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
   setIsCartOpenWidely,
   setCart,
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
   const _token: string = localStorage.getItem("token") || "";
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   async function updateCartToDB(_cart: Cart | undefined = cart) {
@@ -31,10 +32,8 @@ const CartScreen: React.FC<CartScreenProps> = ({
         `black__${_token}`
       );
       if (results.message == "successs updated") {
-        handleShowSnackBar();
         setSnackBarMsg("Cart updated Successfully");
       } else {
-        handleShowSnackBar();
         console.log(results);
         setSnackBarMsg(results.message);
       }
@@ -91,7 +90,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
       setCart(_cart);
     }
   };
-  const handleShowSnackBar = () => setOpen(true);
   const deleteProduct = async (idx: string) => {
     if (typeof cart != "undefined" && cart?.products.length) {
       const newProductsList: Products[] = cart?.products.filter((product) => {
@@ -101,18 +99,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
     }
   };
 
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={() => setOpen(false)}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
 
   return (
     <>
@@ -242,13 +228,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
           </Typography>
         </Box>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-        message={snackBarMsg}
-        action={action}
-      />
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 };

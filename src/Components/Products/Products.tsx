@@ -6,7 +6,7 @@ import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Box, Button, Snackbar } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,8 +14,8 @@ import AddProductModal from "./AddProductModal.tsx";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Cart, Products, ProductObj } from "../Types.tsx";
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 // import styles from "./product.module.css";
-import CloseIcon from '@mui/icons-material/Close';
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -32,9 +32,7 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
   const [isOpenAddProductModal, setIsOpenAddProductModal] =
     useState<boolean>(false);
     const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  const [open, setOpen] = useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token") || "";
-
   const isProductInCart = (idx: string) => {
     if (cart?.products.find((item: Products) => item.productId == idx)) {
       return true;
@@ -83,37 +81,11 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
     if (results.message == "successs") {
       fetchData(_token);
       setSnackBarMsg("Product deleted Successfully");
-      handleShowSnackBar()
     } else {
       alert(results.message);
       setSnackBarMsg(results.message);
-      handleShowSnackBar()
     }
   };
-  const handleShowSnackBar = () => {
-    setOpen(true);
-  };
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
 
 
 
@@ -286,21 +258,8 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
           })}
         </Box>
       </Box>
-      {/* <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message="Note archived"
-        action={action}
-      /> */}
     </Box>
-    <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackBarMsg}
-        action={action}
-      />
+    <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 };

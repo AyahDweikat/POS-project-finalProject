@@ -13,11 +13,9 @@ import Typography from "@mui/material/Typography";
 import {Box} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
-import React from 'react';
-import Snackbar from '@mui/material/Snackbar';
-import CloseIcon from '@mui/icons-material/Close';
 import { InputsObj, UnitObj } from "../Types";
 import styles from './units.module.css'
+import SnackbarComponent from "../../SubComponents/Snackbar";
 
 
 
@@ -26,7 +24,6 @@ export default function Units() {
   const [units, setUnits] = useState<UnitObj[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const [open, setOpen] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const _token: string = localStorage.getItem("token")||"";
 
@@ -54,10 +51,8 @@ export default function Units() {
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      handleShowSnackBar()
       setSnackBarMsg("Unit Added Successfully");
     } else {
-      handleShowSnackBar()
       setSnackBarMsg(results.message);
     }
   };
@@ -81,10 +76,8 @@ export default function Units() {
       navigate(location.pathname);
       if (results.message == "successs updated") {
         fetchData(_token);
-        handleShowSnackBar()
         setSnackBarMsg("Unit updated Successfully");
       } else {
-        handleShowSnackBar()
         setSnackBarMsg(results.message);
       }
     }
@@ -98,33 +91,11 @@ export default function Units() {
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      handleShowSnackBar()
       setSnackBarMsg("Unit deleted Successfully");
     } else {
-      handleShowSnackBar()
       setSnackBarMsg(results.message);
     }
   };
-  const handleShowSnackBar = () => setOpen(true);
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
-  const action = (
-    <React.Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
 
   return (
     <>
@@ -349,13 +320,7 @@ export default function Units() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackBarMsg}
-        action={action}
-      />
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
 }
