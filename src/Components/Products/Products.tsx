@@ -6,15 +6,16 @@ import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Box, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Button, Snackbar } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddProductModal from "./AddProductModal.tsx";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Cart, Products, ProductObj } from "../Types.tsx";
-import styles from "./product.module.css";
+// import styles from "./product.module.css";
+import CloseIcon from '@mui/icons-material/Close';
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -30,6 +31,8 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
   const [products, setProducts] = useState<ProductObj[]>([]);
   const [isOpenAddProductModal, setIsOpenAddProductModal] =
     useState<boolean>(false);
+    const [snackBarMsg, setSnackBarMsg] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
   const _token: string | null = localStorage.getItem("token") || "";
 
   const isProductInCart = (idx: string) => {
@@ -79,11 +82,41 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
-      alert("Product deleted Successfully");
+      setSnackBarMsg("Product deleted Successfully");
+      handleShowSnackBar()
     } else {
       alert(results.message);
+      setSnackBarMsg(results.message);
+      handleShowSnackBar()
     }
   };
+  const handleShowSnackBar = () => {
+    setOpen(true);
+  };
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
+
+
   const addProductToCart = (product: ProductObj) => {
     const { _id, productImg, productCode, ...toCart } = product;
     if (typeof cart != "undefined") {
@@ -104,6 +137,7 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
   };
 
   return (
+    <>
     <Box
       sx={{ minHeight: "89vh", height: "100%" }}
       onClick={() => setIsOpenAddProductModal(false)}
@@ -116,7 +150,7 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
       >
         Add Product
       </Button>
-      {isOpenAddProductModal && <AddProductModal />}
+      {isOpenAddProductModal && <AddProductModal fetchData={fetchData} setIsOpenAddProductModal={setIsOpenAddProductModal} />}
       <Box sx={{ display: "flex" }}>
         <Box
           sx={{
@@ -260,6 +294,14 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
         action={action}
       /> */}
     </Box>
+    <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={snackBarMsg}
+        action={action}
+      />
+    </>
   );
 };
 export default ProductsComponent;
