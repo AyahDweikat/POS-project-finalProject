@@ -7,13 +7,11 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Box, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchApiWithAuthNoBody } from "../fetchApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddProductModal from "./AddProductModal.tsx";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Cart, Products, ProductObj } from "../Types.tsx";
+import { Cart, ProductObj } from "../Types.tsx";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 // import styles from "./product.module.css";
 
@@ -21,10 +19,7 @@ export interface ProductsProps {
   cart: Cart | undefined;
   setCart: (cart: Cart) => void;
 }
-const ProductsComponent: React.FC<ProductsProps | any> = ({
-  cart,
-  setCart,
-}) => {
+const ProductsComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditting, setIsEditting] = useState<boolean>(false);
@@ -33,13 +28,6 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
     useState<boolean>(false);
     const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const _token: string | null = localStorage.getItem("token") || "";
-  const isProductInCart = (idx: string) => {
-    if (cart?.products.find((item: Products) => item.productId == idx)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -86,28 +74,6 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
       setSnackBarMsg(results.message);
     }
   };
-
-
-
-  const addProductToCart = (product: ProductObj) => {
-    const { _id, productImg, productCode, ...toCart } = product;
-    if (typeof cart != "undefined") {
-      const newProductsList = cart?.products || [];
-      newProductsList.unshift({ productId: _id, product: toCart, quantity: 1 });
-      setCart({ ...cart, products: newProductsList });
-    }
-  };
-  const removeProductFromCart = (idx: string) => {
-    if (typeof cart != "undefined" && cart?.products.length) {
-      const newProductsList: Products[] = cart?.products.filter(
-        (product: Products) => {
-          return product.productId != idx;
-        }
-      );
-      setCart({ ...cart, products: newProductsList });
-    }
-  };
-
   return (
     <>
     <Box
@@ -135,23 +101,6 @@ const ProductsComponent: React.FC<ProductsProps | any> = ({
             return (
               <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
                 <CardHeader
-                  avatar={
-                    cart && (
-                      <Button
-                        onClick={
-                          isProductInCart(product._id)
-                            ? () => removeProductFromCart(product._id)
-                            : () => addProductToCart(product)
-                        }
-                      >
-                        {isProductInCart(product._id) ? (
-                          <ShoppingCartIcon />
-                        ) : (
-                          <ShoppingCartOutlinedIcon />
-                        )}
-                      </Button>
-                    )
-                  }
                   action={
                     <IconButton
                       aria-label="delete"

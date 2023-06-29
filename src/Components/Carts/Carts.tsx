@@ -5,8 +5,8 @@ import CartItem from "./CartItem";
 import { Button, Typography } from "@mui/material";
 import { Cart } from "../Types";
 import CartScreen from "./CartScreen";
-import Products from '../Products/Products';
 import { nanoid } from "nanoid";
+import ProductswithCart from "./ProductsWithCart";
 function Carts() {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [cartToOpen, setCartToOpen] = useState<Cart>();
@@ -57,7 +57,8 @@ function Carts() {
         <Typography variant="body1">Carts List</Typography>
         <Button onClick={() => addNewCart()}>Add New Cart</Button>
         <Box>
-          {carts.map((cart) => {
+
+          {carts.length ? carts.map((cart) => {
             return (
               <CartItem
                 openCart={openCart}
@@ -67,11 +68,11 @@ function Carts() {
                 fetchData={fetchData}
               />
             );
-          })}
+          }):<Typography>Nothing in the cart</Typography>}
         </Box>
       </Box>
       <Box>
-        <Products cart={cartToOpen} setCart={setCartToOpen} />
+        <ProductswithCart cart={cartToOpen} setCart={setCartToOpen} />
       </Box>
       {isCartOpenWidely && (
         <CartScreen
