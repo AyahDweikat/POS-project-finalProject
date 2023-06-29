@@ -1,0 +1,16 @@
+.loginPage{
+    font-family: sans-serif !important;
+    height:100%;
+    min-height: 100vh;
+    background-image: url('../assets/BrownDesktop.png');
+}
+.loginTitle{
+    text-align: center;
+    color:hsl(108, 12%, 35%);    
+    font-size: 28px !important;
+    padding-block: 30px !important;
+}
+.inputField{
+    background-color: #fff;
+    border-radius: 8px;
+}

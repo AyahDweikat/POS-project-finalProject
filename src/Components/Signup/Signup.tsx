@@ -1,11 +1,15 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import { Button, TextField, Typography, Box } from "@mui/material";
 import { Formik } from "formik";
 import { fetchApi } from "./../fetchApi.ts";
 import { useNavigate } from "react-router-dom";
 import { SignUpObj } from "../Types.tsx";
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+import styles from './signup.module.css';
 
 function Signup() {
   const navigate = useNavigate();
+  const [snackBarMsg, setSnackBarMsg] = useState<string>("")
   const handleSignup = async (values: SignUpObj) => {
     const results = await fetchApi(
       "POST",
@@ -13,16 +17,19 @@ function Signup() {
       `https://posapp.onrender.com/auth/signup`
     );
     if (results.message == "user is already exist") {
-      // alert("user is already exist");
+      setSnackBarMsg("user is already exist");
     } else if (results.message == "user created") {
+      setSnackBarMsg("user created, see your email");
       navigate("/login");
+    } else {
+      setSnackBarMsg("results.message")
     }
   };
 
   return (
-    <>
-      <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-        Add Units of Measure Form
+    <Box className={styles.signupPage} >
+      <Typography className={styles.signUpTitle} variant="h6" component="h6" sx={{ pb: "10px" }}>
+        Register
       </Typography>
       <Formik
         initialValues={{ userName: "", email: "", password: "", cPassword: "" }}
@@ -73,14 +80,15 @@ function Signup() {
               values.cPassword = "";
             }}
           >
-            <TextField
+            <TextField 
               id="userName"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
                 maxWidth: "400px",
+                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
               }}
+              className={styles.inputField}
+              variant="filled"
               label="User Name"
-              variant="outlined"
               type="userName"
               name="userName"
               onChange={handleChange}
@@ -97,11 +105,12 @@ function Signup() {
             <TextField
               id="email"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
+                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
                 maxWidth: "400px",
               }}
+              className={styles.inputField}
+              variant="filled"
               label="Email"
-              variant="outlined"
               type="email"
               name="email"
               onChange={handleChange}
@@ -118,11 +127,12 @@ function Signup() {
             <TextField
               id="password"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
+                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
                 maxWidth: "400px",
               }}
+              className={styles.inputField}
+              variant="filled"
               label="Password"
-              variant="outlined"
               type="password"
               name="password"
               onChange={handleChange}
@@ -139,11 +149,12 @@ function Signup() {
             <TextField
               id="cPassword"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
+                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
                 maxWidth: "400px",
               }}
+              className={styles.inputField}
+              variant="filled"
               label="Confirm Password"
-              variant="outlined"
               type="password"
               name="cPassword"
               onChange={handleChange}
@@ -159,8 +170,8 @@ function Signup() {
             </Typography>
             <Button
               type="submit"
-              sx={{ width: "80%", maxWidth: "140px" }}
-              variant="outlined"
+              sx={{ width: "80%", maxWidth: "140px", mt:"10px" }}
+              variant="contained"
               disabled={
                 !values.userName.length ||
                 !values.email.length ||
@@ -168,12 +179,13 @@ function Signup() {
                 !values.cPassword.length
               }
             >
-              Add
+              Signup
             </Button>
           </form>
         )}
       </Formik>
-    </>
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
+    </Box>
   );
 }
 

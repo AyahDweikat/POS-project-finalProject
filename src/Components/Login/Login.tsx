@@ -6,9 +6,16 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { GlobalContext } from "../../Context/context.tsx";
 import { LoginObj } from './../Types';
+import styles from './login.module.css';
+import { Box } from '@mui/material';
+import { useState } from 'react';
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+
+
 
 function Login() {
   const navigate = useNavigate();
+  const [snackBarMsg, setSnackBarMsg] = useState<string>("")
   const {auth} = useContext(GlobalContext);
   const handleLogin = async (values: LoginObj) => {
     const results = await fetchApi(
@@ -20,12 +27,14 @@ function Login() {
       localStorage.setItem("token", results.token);
       auth.setToken(results.token)
       navigate('/Carts');
+    } else {
+      setSnackBarMsg(results.message)
     }
   };
   return (
-    <>
-      <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-        Login Forum 
+    <Box className={styles.loginPage}>
+      <Typography className={styles.loginTitle} variant="h6" component="h6" sx={{ pb: "10px" }}>
+        Login  
       </Typography>
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -72,8 +81,9 @@ function Login() {
                 width: { xs: "85%", sm: "70%", md: "50%" },
                 maxWidth: "400px",
               }}
+              className={styles.inputField}
+              variant="filled"
               label="Email"
-              variant="outlined"
               type="email"
               name="email"
               onChange={handleChange}
@@ -93,8 +103,9 @@ function Login() {
                 width: { xs: "85%", sm: "70%", md: "50%" },
                 maxWidth: "400px",
               }}
+              className={styles.inputField}
+              variant="filled"
               label="Password"
-              variant="outlined"
               type="password"
               name="password"
               onChange={handleChange}
@@ -110,16 +121,17 @@ function Login() {
             </Typography>
             <Button
               type="submit"
-              sx={{ width: "80%", maxWidth: "140px" }}
-              variant="outlined"
+              sx={{ width: "80%", maxWidth: "140px", mt:"10px" }}
+              variant="contained"
               disabled={!values.email.length || !values.password.length}
             >
-              Add
+              Login
             </Button>
           </form>
         )}
       </Formik>
-    </>
+      <SnackbarComponent snackBarMsg={snackBarMsg} />
+    </Box>
   );
 }
 

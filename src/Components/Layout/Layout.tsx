@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { GlobalContext } from './../../Context/context.tsx';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from "./theme.ts";
+
+
 
 function Layout({ children }:{children: React.ReactNode}) {
   const [user, setUser] = useState<string>("");
@@ -24,7 +28,9 @@ function Layout({ children }:{children: React.ReactNode}) {
   return (
     <div>
       <GlobalContext.Provider value={{ auth, neededObj }}>
+      <ThemeProvider theme={theme}>
         {children}
+      </ThemeProvider>
       </GlobalContext.Provider>
     </div>
   );
