@@ -2,7 +2,9 @@
   /* max-width: 1280px; */
   margin: 0 auto;
   text-align: center;
-  background-color: #EEEEEE;
+  background-color: #f7e2d6;
+  height: 100%;
+  min-height: 100vh;
 }
 
 
