@@ -22,7 +22,7 @@ function Signup() {
       setSnackBarMsg("user created, see your email");
       navigate("/login");
     } else {
-      setSnackBarMsg("results.message")
+      setSnackBarMsg(results.message)
     }
   };
 
