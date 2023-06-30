@@ -1,15 +1,16 @@
-/* list {
-    display: flex;
-} */
 .addCategoryForm {
   margin-top: 10px;
   border: 1px solid grey;
   border-radius: 8px;
-  max-width: 665px;
+  max-width: 550px;
   margin-inline: auto;
   padding-block: 20px;
+  position: absolute;
+  top: 20px;
+  margin: auto;
+  z-index:50;
+  box-shadow: 0 0 0 50vmax rgba(0,0,0,.5);
 }
-
 .categoryList {
   width: 100%;
   max-width: 360px;

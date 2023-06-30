@@ -1,33 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+
+// import List from "@mui/material/List";
+// import ListItem from "@mui/material/ListItem";
+// import ListItemIcon from "@mui/material/ListItemIcon";
+// import ListItemText from "@mui/material/ListItemText";
+// import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Button, IconButton, TextField, Box } from "@mui/material";
-import { Formik } from "formik";
-import Typography from "@mui/material/Typography";
+import { Button, IconButton, Box } from "@mui/material";
+import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
 } from "../fetchApi.ts";
 import { Category, CategoryObj } from "../Types.tsx";
-import styles from './category.module.css'
+import styles from "./category.module.css";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
-
+import CategoryForm from "./CategoryForm.tsx";
 
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
   const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  const [isEditting, setIsEditting] = useState<boolean>(false);
-  const _token: string | null = localStorage.getItem("token")||"";
+  const [idToUpdate, setIdToUpdate] = useState<string>("");
+  const [categoryToUpdate, setCategoryToUpdate] = useState<CategoryObj>();
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 
-  const fetchData = async (_token:string) => {
+  const _token: string | null = localStorage.getItem("token") || "";
+
+  const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
       `https://posapp.onrender.com/category/getCategories`,
@@ -56,6 +66,7 @@ export default function Categories() {
     }
   };
   const addCategory = async (newCat: string) => {
+    handleCloseForm();
     if (!newCat.length) {
       return;
     }
@@ -76,15 +87,9 @@ export default function Categories() {
       }
     }
   };
-  const updateCategory = async (idx: string, newCat: string) => {
-    const updatedCat = categories.find((item) => item._id === idx);
-    if (updatedCat && updatedCat.category == newCat) {
-      return;
-    }
-    if (categories.find((item) => item.category === newCat)) {
-      return;
-    }
-    const newCategory: Category = { category: newCat };
+  const updateCategory = async (idx: string, updatedCatgory: string) => {
+    handleCloseForm();
+    const newCategory: Category = { category: updatedCatgory };
     const results = await fetchApiWithAuthAndBody(
       "PATCH",
       newCategory,
@@ -99,81 +104,111 @@ export default function Categories() {
       setSnackBarMsg(results.message);
     }
   };
+  const handleCloseForm = () => {
+    setIsAddModalOpen(false);
+    setIdToUpdate("");
+    setCategoryToUpdate({
+      category: "",
+      _id: "",
+    });
+  };
 
   return (
     <>
-      <Box className={styles.addCategoryForm}
-        sx={{ width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" }}}
+      <Button
+        className={styles.openModalBtn}
+        sx={{ my: "10px" }}
+        variant="contained"
+        onClick={() => setIsAddModalOpen(true)}
       >
-        <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-          Add Category Form
-        </Typography>
-        <Formik
-          initialValues={{ category: "" }}
-          validate={(values) => {
-            const errors = { category: "" };
-            if (!values.category) {
-              errors.category = "Required";
-            }
-            return errors;
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
-          }}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-          }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-                addCategory(values.category.toLocaleLowerCase());
-                values.category = "";
-              }}
-            >
-              <TextField
-                id="outlined-basic"
-                sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
-                  maxWidth: "400px",
-                }}
-                label="Category Name"
-                variant="outlined"
-                type="category"
-                name="category"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.category}
-              />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {errors.category && touched.category && errors.category}
-              </Typography>
-              <Button
-                type="submit"
-                sx={{ width: "80%", maxWidth: "140px" }}
-                variant="outlined"
-                disabled={!values.category.length}
-              >
-                Add
-              </Button>
-            </form>
-          )}
-        </Formik>
+        Add New Category
+      </Button>
+      <Box sx={{ position: "relative" }}>
+        {isAddModalOpen && (
+          <CategoryForm
+            handleAddCategory={addCategory}
+            handleCloseForm={handleCloseForm}
+            handleUpdateCategory={updateCategory}
+            idToUpdate={idToUpdate}
+            CategoryToUpdate={categoryToUpdate}
+          />
+        )}
       </Box>
-      <Box className={styles.categoryList}>
+      <TableContainer
+        component={Paper}
+        className={styles.unitsTable}
+        sx={{
+          width: { xs: "90%", lg: "60%" },
+          mx: "auto",
+        }}
+      >
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "#424242" }}>
+            <TableRow>
+              <TableCell sx={{ color: "white" }}>Number</TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Category
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="right">
+                Delete
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="right">
+                Edit
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {categories.map((category, idx) => (
+              <TableRow
+                key={category._id}
+                sx={{ borderBottom: "1px solid grey" }}
+              >
+                <TableCell
+                  component="th"
+                  scope="row"
+                  id="unitOfMeasure"
+                  className={styles.edittingUnits}
+                >
+                  {idx + 1}
+                </TableCell>
+                <TableCell
+                  align="center"
+                  id="baseUnit"
+                  className={styles.edittingUnits}
+                >
+                  {category.category}
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    aria-label="delete"
+                    sx={{ p: "2px" }}
+                    onClick={() => deleteCategory(category._id)}
+                  >
+                    <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    aria-label="edit"
+                    sx={{ p: "2px" }}
+                    onClick={() => {
+                      setIdToUpdate(category._id);
+                      setCategoryToUpdate(category);
+                      setIsAddModalOpen(true);
+                    }}
+                  >
+                    <EditLocationAltOutlinedIcon
+                      sx={{ color: "success.light" }}
+                    />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* <Box className={styles.categoryList}>
         <List className={styles.categoryList}>
           {categories.map((category) => {
             return (
@@ -192,24 +227,14 @@ export default function Categories() {
                 <ListItemIcon>
                   <CategoryRoundedIcon />
                 </ListItemIcon>
-                <ListItemText
-                  contentEditable
-                  suppressContentEditableWarning={true}
-                  onClick={() => setIsEditting(true)}
-                  onBlur={(e) => {
-                    updateCategory(category._id, e.target.innerText);
-                    setIsEditting(false);
-                  }}
-                  className={styles.edittingCategory}
-                  sx={{ borderBottom: isEditting ? "1px solid grey" : "0px"}}
-                >
+                <ListItemText className={styles.edittingCategory}>
                   {category.category}
                 </ListItemText>
               </ListItem>
             );
           })}
         </List>
-      </Box>
+      </Box> */}
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
