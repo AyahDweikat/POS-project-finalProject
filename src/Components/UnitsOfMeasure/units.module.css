@@ -3,6 +3,12 @@
   border: 1px solid grey;
   border-radius: 8px;
   padding-block: 20px;
+  position: absolute;
+  top: 20px;
+  margin: auto;
+  z-index:10;
+  max-width: 665px;
+  box-shadow: 0 0 0 50vmax rgba(0,0,0,.5);
 }
 .edittingUnits {
   text-transform: capitalize;
@@ -11,4 +17,9 @@
 .unitsTable {
   margin-top: 3px;
   border: 1px solid grey;
+}
+.openModalBtn {
+  width: 80%;
+  max-width: 200px;
+  color: white;
 }
