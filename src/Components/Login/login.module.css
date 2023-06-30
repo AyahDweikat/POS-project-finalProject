@@ -4,13 +4,24 @@
     min-height: 100vh;
     background-image: url('../assets/BrownDesktop.png');
 }
+.loginCard{
+    padding-block: 20px;
+    margin: auto;
+    margin-top: 15vh;
+    border: 1px solid rgba(0,0,0, 0.1);
+    background-color: rgba(0,0,0, 0.1);
+}
 .loginTitle{
     text-align: center;
     color:hsl(108, 12%, 35%);    
     font-size: 28px !important;
-    padding-block: 30px !important;
+    padding-block: 10px !important;
 }
 .inputField{
     background-color: #fff;
     border-radius: 8px;
+}
+Button:disabled{
+    color: #fff !important;
+    background-color: rgba(83, 100, 79, 0.5) !important;
 }

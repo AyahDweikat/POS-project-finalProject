@@ -33,6 +33,7 @@ function Login() {
   };
   return (
     <Box className={styles.loginPage}>
+      <Box className={styles.loginCard} sx={{width: { xs: "95%", sm: "80%", md: "60%" }, maxWidth:"500px"}}>
       <Typography className={styles.loginTitle} variant="h6" component="h6" sx={{ pb: "10px" }}>
         Login  
       </Typography>
@@ -78,7 +79,7 @@ function Login() {
             <TextField
               id="email"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
                 maxWidth: "400px",
               }}
               className={styles.inputField}
@@ -100,7 +101,7 @@ function Login() {
             <TextField
               id="password"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%" },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
                 maxWidth: "400px",
               }}
               className={styles.inputField}
@@ -121,7 +122,7 @@ function Login() {
             </Typography>
             <Button
               type="submit"
-              sx={{ width: "80%", maxWidth: "140px", mt:"10px" }}
+              sx={{ width: "80%", maxWidth: "140px", my:"10px", color:"white" }}
               variant="contained"
               disabled={!values.email.length || !values.password.length}
             >
@@ -130,6 +131,7 @@ function Login() {
           </form>
         )}
       </Formik>
+      </Box>
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </Box>
   );

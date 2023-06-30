@@ -1,7 +1,9 @@
-import { Avatar, Typography, Box, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Avatar, Typography, Box } from "@mui/material";
+import { useEffect, useState, ChangeEvent } from "react";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import { fetchApiWithAuthNoBody } from "../fetchApi";
+import { fetchApiWithAuthNoBody, fetchImage } from "../fetchApi";
+import "./profile.css";
+
 interface User {
   _id: string;
   userName: string;
@@ -10,7 +12,12 @@ interface User {
 }
 function Profile() {
   const _token: string | null = localStorage.getItem("token") || "";
-  const [userData, setUserData] = useState<User>({_id:'', userName:'', email:'', profilePic:''});
+  const [userData, setUserData] = useState<User>({
+    _id: "",
+    userName: "",
+    email: "",
+    profilePic: "",
+  });
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -25,9 +32,23 @@ function Profile() {
   useEffect(() => {
     fetchData(_token);
   }, [_token]);
-  const handleFileChange=()=>{
-    console.log("first")
+  const sendImage = async(formData: FormData)=>{
+    const results = await fetchImage(
+      "PATCH",
+      formData,
+      `https://posapp.onrender.com/user/addProfileImg`,
+      `black__${_token}`
+    );
+    console.log(results)
   }
+  const handleFileChange = async(e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files && e.target.files.length){
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("image", file);
+      sendImage(formData)
+    }
+  };
   return (
     <>
       <Box sx={{ position: "relative", width: "40%", margin: "auto" }}>
@@ -42,25 +63,27 @@ function Profile() {
             fontSize: "100px",
           }}
         />
-        <Button
-        // type="file" onChange={handleFileChange}
-          sx={{
-            backgroundColor: "primary.light",
-            p: "10px",
-            pb: "3px",
-            borderRadius: "50%",
-            position: "absolute",
-            zIndex: "8",
-            top: "150px",
-            right: "70px",
-          }}
-          
-        >
+        <label className="custom-file-upload">
+          <input
+            className="inputFileUpload"
+            type="file"
+            name="image"
+            onChange={handleFileChange}
+          />
           <CameraAltIcon sx={{ color: "secondary.main" }} />
-        </Button>
-
-        <Typography sx={{textAlign:"left", ml:"50px"}}>User Name: {userData.userName}</Typography>
-        <Typography sx={{textAlign:"left", ml:"50px"}}>Email: {userData.email}</Typography>
+        </label>
+        <Typography sx={{ textAlign: "left", ml: "50px", fontWeight:"600", fontSize:"16px", color:"secondary.main" }}>
+          User Name:
+        </Typography>
+        <Typography sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
+          {userData.userName}
+        </Typography>
+        <Typography sx={{ textAlign: "left", ml: "50px", fontWeight:"600", fontSize:"16px", color:"secondary.main" }}>
+          Email:
+        </Typography>
+        <Typography sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
+          {userData.email}
+        </Typography>
       </Box>
     </>
   );

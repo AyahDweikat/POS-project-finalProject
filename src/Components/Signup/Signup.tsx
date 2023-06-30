@@ -28,6 +28,7 @@ function Signup() {
 
   return (
     <Box className={styles.signupPage} >
+      <Box className={styles.signupCard} sx={{width: { xs: "95%", sm: "80%", md: "60%" }, maxWidth:"500px"}}>
       <Typography className={styles.signUpTitle} variant="h6" component="h6" sx={{ pb: "10px" }}>
         Register
       </Typography>
@@ -84,7 +85,7 @@ function Signup() {
               id="userName"
               sx={{
                 maxWidth: "400px",
-                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
               }}
               className={styles.inputField}
               variant="filled"
@@ -105,7 +106,7 @@ function Signup() {
             <TextField
               id="email"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
                 maxWidth: "400px",
               }}
               className={styles.inputField}
@@ -127,7 +128,7 @@ function Signup() {
             <TextField
               id="password"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
                 maxWidth: "400px",
               }}
               className={styles.inputField}
@@ -149,7 +150,7 @@ function Signup() {
             <TextField
               id="cPassword"
               sx={{
-                width: { xs: "85%", sm: "70%", md: "50%", lg:'70%' },
+                width: { xs: "80%", sm: "70%", md: "60%", lg:"70%" },
                 maxWidth: "400px",
               }}
               className={styles.inputField}
@@ -170,7 +171,7 @@ function Signup() {
             </Typography>
             <Button
               type="submit"
-              sx={{ width: "80%", maxWidth: "140px", mt:"10px" }}
+              sx={{ width: "80%", maxWidth: "140px", my:"10px", color:"white" }}
               variant="contained"
               disabled={
                 !values.userName.length ||
@@ -184,6 +185,7 @@ function Signup() {
           </form>
         )}
       </Formik>
+      </Box>
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </Box>
   );

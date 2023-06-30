@@ -42,3 +42,16 @@ export const fetchApiWithAuthAndBody =async (method:string,obj={}, url:string, t
         requestOptions
     ).then((response) => response.json())
 }
+
+
+export const fetchImage =async (method:string,obj={}, url:string, token:string)=>{
+    const requestOptions = {
+        method,
+        headers: { "Content-Type": `multipart/form-data`, "authorization": token},
+        body: JSON.stringify(obj),
+      };
+    return fetch(
+        url,
+        requestOptions
+    ).then((response) => response.json())
+}
