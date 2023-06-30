@@ -26,6 +26,7 @@ const UnitsAddForm: React.FC<addUnitModalProps> = ({
       className={styles.unitsPage}
       sx={{
         left:{ xs: "2.5%", sm: "10%", md: "30%" },
+        backgroundColor:"primary.light",
         width: { xs: "95%", sm: "80%", md: "40%" },
       }}
     >

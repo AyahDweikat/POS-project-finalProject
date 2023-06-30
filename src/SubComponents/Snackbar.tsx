@@ -11,18 +11,18 @@ const SnackbarComponent: React.FC<SnackbarProps> = ({ snackBarMsg }) => {
     if (snackBarMsg) {
       handleShowSnackBar();
     }
-  });
+  }, [snackBarMsg]);
   const [open, setOpen] = useState<boolean>(false);
   const handleShowSnackBar = () => {
     setOpen(true);
   };
   const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
+    // event: React.SyntheticEvent | Event,
+    // reason?: string
   ) => {
-    if (reason === "clickaway") {
-      return;
-    }
+    // if (reason === "clickaway") {
+    //   return;
+    // }
     setOpen(false);
   };
   const action = (

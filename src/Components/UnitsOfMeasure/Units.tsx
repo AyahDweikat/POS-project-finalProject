@@ -42,13 +42,13 @@ export default function Units() {
     fetchData(_token);
   }, [_token]);
   const addUnitRow = async (valuesFromInputs: InputsObj) => {
+    handleCloseForm();
     const results = await fetchApiWithAuthAndBody(
       "POST",
       valuesFromInputs,
       `https://posapp.onrender.com/unit/addUnit`,
       `black__${_token}`
     );
-    handleCloseForm();
     navigate(location.pathname);
     if (results.message == "successs") {
       fetchData(_token);
@@ -68,13 +68,13 @@ export default function Units() {
     });
   };
   const updateUnit = async (idx: string, updatedUnit: InputsObj) => {
+    handleCloseForm();
     const results = await fetchApiWithAuthAndBody(
       "PATCH",
       updatedUnit,
       `https://posapp.onrender.com/unit/updateUnit/${idx}`,
       `black__${_token}`
     );
-    handleCloseForm();
     navigate(location.pathname);
     if (results.message == "successs updated") {
       fetchData(_token);
@@ -106,7 +106,7 @@ export default function Units() {
         variant="contained"
         onClick={() => setIsAddModalOpen(true)}
       >
-        Add New Units
+        Add New Unit
       </Button>
       <Box sx={{ position: "relative" }}>
         {isAddModalOpen && (
@@ -170,7 +170,7 @@ export default function Units() {
                 >
                   {row.conversionFactor}
                 </TableCell>
-                <TableCell align="right" sx={{ borderBottom: 1 }}>
+                <TableCell align="right">
                   <IconButton
                     aria-label="delete"
                     sx={{ p: "2px" }}
@@ -179,7 +179,7 @@ export default function Units() {
                     <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
                   </IconButton>
                 </TableCell>
-                <TableCell align="right" sx={{ borderBottom: 1 }}>
+                <TableCell align="right">
                   <IconButton
                     aria-label="edit"
                     sx={{ p: "2px" }}
