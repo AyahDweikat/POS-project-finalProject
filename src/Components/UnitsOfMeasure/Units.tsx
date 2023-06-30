@@ -8,7 +8,7 @@ import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 import { InputsObj, UnitObj } from "../Types";
@@ -119,6 +119,7 @@ export default function Units() {
           />
         )}
       </Box>
+      {units.length ? 
       <TableContainer
         component={Paper}
         className={styles.unitsTable}
@@ -199,6 +200,9 @@ export default function Units() {
           </TableBody>
         </Table>
       </TableContainer>
+      : 
+      <Typography>No Units Data</Typography>
+      }
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );

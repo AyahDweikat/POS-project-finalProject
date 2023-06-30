@@ -14,7 +14,7 @@ import Paper from "@mui/material/Paper";
 // import ListItemText from "@mui/material/ListItemText";
 // import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Button, IconButton, Box } from "@mui/material";
+import { Button, IconButton, Box, Typography } from "@mui/material";
 import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -134,6 +134,7 @@ export default function Categories() {
           />
         )}
       </Box>
+      {categories.length ?
       <TableContainer
         component={Paper}
         className={styles.unitsTable}
@@ -207,34 +208,9 @@ export default function Categories() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* <Box className={styles.categoryList}>
-        <List className={styles.categoryList}>
-          {categories.map((category) => {
-            return (
-              <ListItem
-                key={category._id}
-                sx={{ backgroundColor: "#eee5e5", m: "10px" }}
-                secondaryAction={
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => deleteCategory(category._id)}
-                  >
-                    <DeleteForeverRoundedIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemIcon>
-                  <CategoryRoundedIcon />
-                </ListItemIcon>
-                <ListItemText className={styles.edittingCategory}>
-                  {category.category}
-                </ListItemText>
-              </ListItem>
-            );
-          })}
-        </List>
-      </Box> */}
+      : 
+      <Typography>No Categories Data</Typography>
+      }
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );
