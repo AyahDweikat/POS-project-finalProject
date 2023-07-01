@@ -31,7 +31,7 @@ const UnitsAddForm: React.FC<addUnitModalProps> = ({
       }}
     >
       <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-        Add Units of Measure Form
+        Units of Measure Form
       </Typography>
       <Formik
         initialValues={{ unitOfMeasure: unitToUpdate?.unitOfMeasure ||"", baseUnit:unitToUpdate?.baseUnit ||"", conversionFactor: unitToUpdate?.conversionFactor || 0 }}
