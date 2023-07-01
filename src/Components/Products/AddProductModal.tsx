@@ -1,26 +1,32 @@
-import React from "react";
-import {
-  Button,
-  TextField,
-  Box,
-  Typography
-} from "@mui/material";
+import React, { useEffect } from "react";
+import { Button, TextField, Box, Typography, MenuItem } from "@mui/material";
+// import MenuItem from '@mui/material/MenuItem';
 import { Formik } from "formik";
 import styles from "./product.module.css";
-import { ProductInputObj } from "../Types";
+import { CategoryObj, ProductInputObj, ProductObj } from "../Types";
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
-import { fetchApiWithAuthAndBody } from "../fetchApi";
+import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 import SnackbarComponent from "../../SubComponents/Snackbar";
-
+// import { useLocation, useNavigate } from "react-router-dom";
 
 interface addProductModalProps {
-  fetchData: (token: string) => void;
-  setIsOpenAddProductModal:(state:boolean)=>void;
+  fetchProductsData: (token: string) => void;
+  handleCloseForm: () => void;
+  idToUpdate: string;
+  productToUpdate: ProductObj | undefined;
 }
 
-const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenAddProductModal }) => {
+const AddProductModal: React.FC<addProductModalProps> = ({
+  fetchProductsData,
+  handleCloseForm,
+  idToUpdate,
+  productToUpdate,
+}) => {
+  // const navigate = useNavigate();
+  // const location = useLocation();
   const [file, setFile] = useState<File>();
+  const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const _token: string | null = localStorage.getItem("token") || "";
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +34,21 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
       setFile(e.target.files[0]);
     }
   };
+  const fetchData = async (_token: string) => {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/category/getCategories`,
+      `black__${_token}`
+    );
+    if (results.CategoryList) {
+      setCategories(results.CategoryList);
+    }
+    return results;
+  };
+  useEffect(() => {
+    fetchData(_token);
+  }, [_token]);
+
   const addProduct = async (values: ProductInputObj) => {
     const {
       productName,
@@ -67,13 +88,65 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
       })
       .then((results) => {
         if (results.message == "successs") {
-          fetchData(_token);
-          console.log(results.message);
-          setIsOpenAddProductModal(false)
+          fetchProductsData(_token);
+          handleCloseForm();
           setSnackBarMsg("Product Added Successfully");
         } else {
-          console.log(results);
-          setIsOpenAddProductModal(false)
+          handleCloseForm();
+          setSnackBarMsg(results.message);
+        }
+      })
+      .catch((error) => {
+        return `${error}`;
+      });
+  };
+  const updateProductData = async (
+    idx: string,
+    updatedProduct: ProductInputObj
+  ) => {
+    handleCloseForm();
+    const {
+      productName,
+      productCode,
+      productCategory,
+      productPrice,
+      measureUnit,
+    } = updatedProduct;
+    if (!file) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "svqzsfpy");
+    axios
+      .post(`https://api.cloudinary.com/v1_1/dujgkfw6w/image/upload`, formData)
+      .then((response) => {
+        return response.data.secure_url;
+      })
+      .then((resImg) => {
+        return {
+          productName,
+          productCode,
+          productCategory,
+          productPrice,
+          measureUnit,
+          productImg: resImg,
+        };
+      }).then((updatedProduct)=>{
+        return fetchApiWithAuthAndBody(
+          "PATCH",
+          updatedProduct,
+          `https://posapp.onrender.com/product/updateProduct/${idx}`,
+          `black__${_token}`
+        );
+      })
+      .then((results) => {
+        if (results.message == "successs updated") {
+          fetchProductsData(_token);
+          setSnackBarMsg("Product Updated Successfully");
+          handleCloseForm();
+        } else {
+          handleCloseForm();
           setSnackBarMsg(results.message);
         }
       })
@@ -86,25 +159,26 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
     <>
       <Box
         onClick={(e) => e.stopPropagation()}
+        className={styles.addModal}
         sx={{
           width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
+          backgroundColor: "primary.light",
           left: { xs: "0vw", sm: "12vw", md: "20vw", lg: "24vw" },
           position: "absolute",
           top: "20px",
         }}
-        className={styles.addModal}
       >
         <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
-          Add Product
+          Product Form
         </Typography>
         <Formik
           initialValues={{
-            productName: "",
-            productCode: "",
+            productName: productToUpdate?.productName || "",
+            productCode: productToUpdate?.productCode || "",
             productImg: "",
-            productCategory: "",
-            productPrice: 0,
-            measureUnit: "",
+            productCategory: productToUpdate?.productCategory || "",
+            productPrice: productToUpdate?.productPrice || 0,
+            measureUnit: productToUpdate?.measureUnit || "",
           }}
           validate={(values) => {
             const errors = {
@@ -154,15 +228,16 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
             <form
               onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
-                // handleUploadClick(e)
-                // handleUploadClick();
                 handleSubmit();
-
-                addProduct(values);
+                {
+                  idToUpdate
+                    ? updateProductData(idToUpdate, values)
+                    : addProduct(values);
+                }
                 values.productName = "";
                 values.productCode = "";
-                values.productCategory = "";
                 values.productImg = "";
+                values.productCategory = "";
                 values.productPrice = 0;
                 values.measureUnit = "";
               }}
@@ -170,7 +245,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
               <TextField
                 id="productName"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
                 label="Product Name"
@@ -193,7 +268,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
               <TextField
                 id="productCode"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
                 label="Product Code"
@@ -213,20 +288,30 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
                   touched.productCode &&
                   errors.productCode}
               </Typography>
+
               <TextField
                 id="productCategory"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
-                label="Product Category"
                 variant="outlined"
                 type="category"
                 name="productCategory"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.productCategory}
-              />
+                select
+                label="Select"
+                defaultValue=""
+                helperText="Please select category"
+              >
+                {categories.map((category) => (
+                  <MenuItem key={category._id} value={category.category}>
+                    {category.category}
+                  </MenuItem>
+                ))}
+              </TextField>
               <Typography
                 variant="body1"
                 component="p"
@@ -236,36 +321,23 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
                   touched.productCategory &&
                   errors.productCategory}
               </Typography>
-
               <TextField
                 id="productImg"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
                 type="file"
                 onChange={handleFileChange}
-                // label="Product Img"
                 variant="outlined"
                 name="productImg"
                 placeholder="add image"
                 onBlur={handleBlur}
-                value={values.productImg}
               />
-              <Typography
-                variant="body1"
-                component="p"
-                sx={{ pb: "10px", fontSize: "12px", color: "red" }}
-              >
-                {/* {errors.productImg &&
-                  touched.productImg &&
-                  errors.productImg} */}
-              </Typography>
-
               <TextField
                 id="productPrice"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
                 label="Product Price"
@@ -288,7 +360,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
               <TextField
                 id="measureUnit"
                 sx={{
-                  width: { xs: "85%", sm: "70%", md: "50%" },
+                  width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
                 label="Unit Of Measure"
@@ -311,18 +383,30 @@ const AddProductModal: React.FC<addProductModalProps> = ({ fetchData, setIsOpenA
 
               <Button
                 type="submit"
-                sx={{ width: "80%", maxWidth: "140px" }}
-                variant="outlined"
+                sx={{
+                  width: "80%",
+                  maxWidth: "140px",
+                  my: "10px",
+                  color: "white",
+                  mr: "20px",
+                }}
+                variant="contained"
                 disabled={
                   !values.productName.length ||
                   !values.productCode.length ||
                   !values.productCategory.length ||
-                  // !values.productImg.length ||
                   !values.measureUnit.length ||
                   !values.productPrice
                 }
               >
-                Add
+                {idToUpdate ? "Update" : "Add"}
+              </Button>
+              <Button
+                sx={{ width: "80%", maxWidth: "140px" }}
+                variant="outlined"
+                onClick={() => handleCloseForm()}
+              >
+                Cancel
               </Button>
             </form>
           )}

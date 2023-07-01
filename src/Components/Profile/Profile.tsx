@@ -2,7 +2,7 @@ import { Avatar, Typography, Box } from "@mui/material";
 import { useEffect, useState, ChangeEvent } from "react";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { fetchApiWithAuthNoBody, fetchImage } from "../fetchApi";
-import "./profile.css";
+import styles from "./profile.module.css";
 
 interface User {
   _id: string;
@@ -63,7 +63,7 @@ function Profile() {
             fontSize: "100px",
           }}
         />
-        <label className="custom-file-upload">
+        <label className={styles.customFileUpload}>
           <input
             className="inputFileUpload"
             type="file"

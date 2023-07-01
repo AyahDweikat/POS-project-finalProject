@@ -1,12 +1,20 @@
 .addModal {
-    margin-top: 0px;
-    border: 1px solid grey;
-    border-radius: 8px;
-    max-width: 665px;
-    height:75vh;
-    background-color:white;
-    margin-inline: auto;
-    padding-block: 15px;
-    margin:auto;
-    z-index:6;
+  margin-top: 0px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  max-width: 665px;
+  height: 90vh;
+  background-color: white;
+  margin-inline: auto;
+  padding-block: 15px;
+  margin: auto;
+  z-index: 6;
+  top: 20px;
+  box-shadow: 0 0 0 50vmax rgba(0, 0, 0, 0.5);
+}
+
+.openModalBtn {
+  width: 80%;
+  max-width: 200px;
+  color: white;
 }
