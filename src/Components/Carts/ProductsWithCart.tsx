@@ -6,10 +6,10 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { fetchApiWithAuthNoBody } from "../fetchApi";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Cart, Products, ProductObj } from "../Types.tsx";
+import { getProducts } from "../Utils.tsx";
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -28,19 +28,9 @@ const ProductswithCart: React.FC<ProductsProps> = ({
       return false;
     }
   };
-  const fetchData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/product/getProducts`,
-      `black__${_token}`
-    );
-    if (results.ProductList) {
-      setProducts(results.ProductList);
-    }
-    return results;
-  };
+
   useEffect(() => {
-    fetchData(_token);
+    getProducts(_token, setProducts);
   }, [_token]);
 
 

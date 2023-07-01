@@ -6,20 +6,20 @@ import styles from "./product.module.css";
 import { CategoryObj, ProductInputObj, ProductObj } from "../Types";
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
-import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
+import { fetchApiWithAuthAndBody } from "../fetchApi";
 import SnackbarComponent from "../../SubComponents/Snackbar";
-import { sortFunctionByStrings } from "../Utils";
+import { getCategories, getProducts, sortFunctionByStrings } from "../Utils";
 // import { useLocation, useNavigate } from "react-router-dom";
 
 interface addProductModalProps {
-  fetchProductsData: (token: string) => void;
   handleCloseForm: () => void;
+  setProducts:(arr:ProductObj[])=>void;
   idToUpdate: string;
   productToUpdate: ProductObj | undefined;
 }
 
 const AddProductModal: React.FC<addProductModalProps> = ({
-  fetchProductsData,
+  setProducts,
   handleCloseForm,
   idToUpdate,
   productToUpdate,
@@ -28,19 +28,9 @@ const AddProductModal: React.FC<addProductModalProps> = ({
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [categories, setCategories] = useState<CategoryObj[]>([]);
   const _token: string | null = localStorage.getItem("token") || "";
-  const fetchData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/category/getCategories`,
-      `black__${_token}`
-    );
-    if (results.CategoryList) {
-      setCategories(sortFunctionByStrings(results.CategoryList));
-    }
-    return results;
-  };
+  
   useEffect(() => {
-    fetchData(_token);
+    getCategories(_token, setCategories);
   }, [_token]);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -89,7 +79,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
       })
       .then((results) => {
         if (results.message == "successs") {
-          fetchProductsData(_token);
+          getProducts(_token, setProducts);
           handleCloseForm();
           setSnackBarMsg("Product Added Successfully");
         } else {
@@ -143,7 +133,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
       })
       .then((results) => {
         if (results.message == "successs updated") {
-          fetchProductsData(_token);
+          getProducts(_token, setProducts);
           setSnackBarMsg("Product Updated Successfully");
           handleCloseForm();
         } else {

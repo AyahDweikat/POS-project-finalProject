@@ -25,32 +25,22 @@ import { Category, CategoryObj } from "../Types.tsx";
 import styles from "./category.module.css";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import CategoryForm from "./CategoryForm.tsx";
-import { sortFunctionByStrings } from "../Utils.tsx";
+import { getCategories } from "../Utils.tsx";
 
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
+  const _token: string | null = localStorage.getItem("token") || "";
   const [categories, setCategories] = useState<CategoryObj[]>([]);
+
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [idToUpdate, setIdToUpdate] = useState<string>("");
   const [categoryToUpdate, setCategoryToUpdate] = useState<CategoryObj>();
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 
-  const _token: string | null = localStorage.getItem("token") || "";
 
-  const fetchData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/category/getCategories`,
-      `black__${_token}`
-    );
-    if (results.CategoryList) {
-      setCategories(sortFunctionByStrings(results.CategoryList));
-    }
-    return results;
-  };
   useEffect(() => {
-    fetchData(_token);
+    getCategories(_token, setCategories);
   }, [_token]);
   const deleteCategory = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
@@ -60,7 +50,7 @@ export default function Categories() {
     );
     navigate(location.pathname);
     if (results.message == "successs") {
-      fetchData(_token);
+      getCategories(_token, setCategories);
       setSnackBarMsg("Category deleted Successfully");
     } else {
       setSnackBarMsg(results.message);
@@ -81,7 +71,7 @@ export default function Categories() {
       );
       navigate(location.pathname);
       if (results.message == "successs") {
-        fetchData(_token);
+        getCategories(_token, setCategories);
         setSnackBarMsg("Category Added Successfully");
       } else {
         setSnackBarMsg(results.message);
@@ -99,7 +89,7 @@ export default function Categories() {
     );
     navigate(location.pathname);
     if (results.message == "successs updated") {
-      fetchData(_token);
+      getCategories(_token, setCategories);
       setSnackBarMsg("Category updated Successfully");
     } else {
       setSnackBarMsg(results.message);

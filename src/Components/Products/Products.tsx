@@ -24,7 +24,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import styles from "./product.module.css";
-import { sortFunctionByStrings } from "../Utils.tsx";
+import { getCategories, getProducts, sortFunctionByStrings } from "../Utils.tsx";
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -54,36 +54,12 @@ const ProductsComponent = () => {
   const [productToUpdate, setProductToUpdate] = useState<ProductObj>();
   const displayProducts = filterByCategory(filterValue,searchResults(searchValue, products));
 
-  const fetchData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/product/getProducts`,
-      `black__${_token}`
-    );
-    if (results.ProductList) {
-      setProducts(results.ProductList);
-    }
-    return results;
-  };
   useEffect(() => {
-    fetchData(_token);
+    getProducts(_token, setProducts);
+    getCategories(_token, setCategories);
   }, [_token]);
 
   const [categories, setCategories] = useState<CategoryObj[]>([]);
-  const fetchCategoryData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/category/getCategories`,
-      `black__${_token}`
-    );
-    if (results.CategoryList) {
-      setCategories(sortFunctionByStrings(results.CategoryList));
-    }
-    return results;
-  };
-  useEffect(() => {
-    fetchCategoryData(_token);
-  }, [_token]);
 
   function searchResults(searchValue: string, products: ProductObj[]) {
     return products.filter((product: ProductObj) => {
@@ -122,7 +98,7 @@ const ProductsComponent = () => {
     );
     navigate(location.pathname);
     if (results.message == "successs") {
-      fetchData(_token);
+      getProducts(_token, setProducts);
       setSnackBarMsg("Product deleted Successfully");
     } else {
       alert(results.message);
@@ -206,8 +182,8 @@ const ProductsComponent = () => {
       </Box>
       {isOpenAddProductModal && (
         <AddProductModal
-          fetchProductsData={fetchData}
           idToUpdate={idToUpdate}
+          setProducts={setProducts}
           productToUpdate={productToUpdate}
           handleCloseForm={handleCloseForm}
         />

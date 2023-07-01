@@ -18,7 +18,7 @@ function Profile() {
     email: "",
     profilePic: "",
   });
-  const fetchData = async (_token: string) => {
+  const fetchUserData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
       `https://posapp.onrender.com/user/getProfile`,
@@ -30,7 +30,7 @@ function Profile() {
     return results;
   };
   useEffect(() => {
-    fetchData(_token);
+    fetchUserData(_token);
   }, [_token]);
   const sendImage = async(formData: FormData)=>{
     const results = await fetchImage(

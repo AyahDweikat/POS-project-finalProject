@@ -15,6 +15,7 @@ import { InputsObj, UnitObj } from "../Types";
 import styles from "./units.module.css";
 import SnackbarComponent from "../../SubComponents/Snackbar";
 import UnitsAddForm from "./UnitsAddForm";
+import { getUnits } from "../Utils";
 
 export default function Units() {
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
@@ -27,19 +28,8 @@ export default function Units() {
 
   const _token: string = localStorage.getItem("token") || "";
 
-  async function fetchData(_token: string) {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/unit/getUnits`,
-      `black__${_token}`
-    );
-    if (results.UnitList) {
-      setUnits(results.UnitList);
-    }
-    return results;
-  }
   useEffect(() => {
-    fetchData(_token);
+    getUnits(_token, setUnits);
   }, [_token]);
   const addUnitRow = async (valuesFromInputs: InputsObj) => {
     handleCloseForm();
@@ -51,7 +41,7 @@ export default function Units() {
     );
     navigate(location.pathname);
     if (results.message == "successs") {
-      fetchData(_token);
+      getUnits(_token, setUnits);
       setSnackBarMsg("Unit Added Successfully");
     } else {
       setSnackBarMsg(results.message);
@@ -77,7 +67,7 @@ export default function Units() {
     );
     navigate(location.pathname);
     if (results.message == "successs updated") {
-      fetchData(_token);
+      getUnits(_token, setUnits);
       setSnackBarMsg("Unit updated Successfully");
     } else {
       setSnackBarMsg(results.message);
@@ -91,7 +81,7 @@ export default function Units() {
     );
     navigate(location.pathname);
     if (results.message == "successs") {
-      fetchData(_token);
+      getUnits(_token, setUnits);
       setSnackBarMsg("Unit deleted Successfully");
     } else {
       setSnackBarMsg(results.message);
