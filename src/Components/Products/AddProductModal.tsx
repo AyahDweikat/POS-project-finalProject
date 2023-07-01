@@ -24,17 +24,10 @@ const AddProductModal: React.FC<addProductModalProps> = ({
   idToUpdate,
   productToUpdate,
 }) => {
-  // const navigate = useNavigate();
-  // const location = useLocation();
   const [file, setFile] = useState<File>();
-  const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
+  const [categories, setCategories] = useState<CategoryObj[]>([]);
   const _token: string | null = localStorage.getItem("token") || "";
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
   const fetchData = async (_token: string) => {
     const results = await fetchApiWithAuthNoBody(
       "GET",
@@ -49,6 +42,13 @@ const AddProductModal: React.FC<addProductModalProps> = ({
   useEffect(() => {
     fetchData(_token);
   }, [_token]);
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+  
+  
 
   const addProduct = async (values: ProductInputObj) => {
     const {
@@ -166,7 +166,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
           backgroundColor: "primary.light",
           left: { xs: "0vw", sm: "12vw", md: "20vw", lg: "24vw" },
           position: "absolute",
-          top: "20px",
+          top: "50px",
         }}
       >
         <Typography variant="h6" component="h6" sx={{ pb: "10px" }}>
@@ -249,6 +249,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
+                size="small"
                 label="Product Name"
                 variant="outlined"
                 type="name"
@@ -272,6 +273,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
+                size="small"
                 label="Product Code"
                 variant="outlined"
                 type="code"
@@ -296,6 +298,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
+                size="small"
                 variant="outlined"
                 type="category"
                 name="productCategory"
@@ -323,9 +326,11 @@ const AddProductModal: React.FC<addProductModalProps> = ({
               </Typography>
               <TextField
                 id="productImg"
+                size="small"
                 sx={{
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
+                  mb:"15px"
                 }}
                 type="file"
                 onChange={handleFileChange}
@@ -340,6 +345,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
+                size="small"
                 label="Product Price"
                 variant="outlined"
                 type="price"
@@ -363,6 +369,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                   width: { xs: "80%", sm: "70%", md: "60%", lg: "70%" },
                   maxWidth: "400px",
                 }}
+                size="small"
                 label="Unit Of Measure"
                 variant="outlined"
                 type="measureUnit"
