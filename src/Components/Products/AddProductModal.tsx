@@ -8,6 +8,7 @@ import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../fetchApi";
 import SnackbarComponent from "../../SubComponents/Snackbar";
+import { sortFunctionByStrings } from "../Utils";
 // import { useLocation, useNavigate } from "react-router-dom";
 
 interface addProductModalProps {
@@ -41,7 +42,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
       `black__${_token}`
     );
     if (results.CategoryList) {
-      setCategories(results.CategoryList);
+      setCategories(sortFunctionByStrings(results.CategoryList));
     }
     return results;
   };
@@ -302,9 +303,8 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                 onBlur={handleBlur}
                 value={values.productCategory}
                 select
-                label="Select"
+                label="Select Category"
                 defaultValue=""
-                helperText="Please select category"
               >
                 {categories.map((category) => (
                   <MenuItem key={category._id} value={category.category}>

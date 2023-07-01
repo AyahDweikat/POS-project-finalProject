@@ -25,6 +25,7 @@ import { Category, CategoryObj } from "../Types.tsx";
 import styles from "./category.module.css";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import CategoryForm from "./CategoryForm.tsx";
+import { sortFunctionByStrings } from "../Utils.tsx";
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Categories() {
       `black__${_token}`
     );
     if (results.CategoryList) {
-      setCategories(results.CategoryList);
+      setCategories(sortFunctionByStrings(results.CategoryList));
     }
     return results;
   };
