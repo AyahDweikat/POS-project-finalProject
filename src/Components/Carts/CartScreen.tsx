@@ -8,69 +8,64 @@ import { Button } from "@mui/material";
 import { fetchApiWithAuthAndBody } from "../fetchApi";
 import styles from "./carts.module.css";
 import SnackbarComponent from "../../SubComponents/Snackbar";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import CloseIcon from "@mui/icons-material/Close";
+
 
 
 interface CartScreenProps {
   setIsCartOpenWidely: (state: boolean) => void;
-  cart: Cart | undefined;
+  cart: Cart;
+  handleDeleteCart: (idx: string) => void;
   setCart: (cart: Cart) => void;
 }
 const CartScreen: React.FC<CartScreenProps> = ({
   cart,
-  setIsCartOpenWidely,
   setCart,
+  setIsCartOpenWidely,
+  handleDeleteCart,
 }) => {
   const _token: string = localStorage.getItem("token") || "";
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  async function updateCartToDB(_cart: Cart | undefined = cart) {
-    if (typeof cart != "undefined") {
-      const { _id, ...newCart } = cart;
-      const results = await fetchApiWithAuthAndBody(
-        "POST",
-        newCart,
-        `https://posapp.onrender.com/cart/addCart`,
-        `black__${_token}`
-      );
-      if (results.message == "successs updated") {
-        setSnackBarMsg("Cart updated Successfully");
-      } else {
-        console.log(results);
-        setSnackBarMsg(results.message);
-      }
+
+  async function addCartToOrder(idx: string) {
+    const { _id, ...newCart } = cart;
+    const results = await fetchApiWithAuthAndBody(
+      "POST",
+      newCart,
+      `https://posapp.onrender.com/cart/addCart`,
+      `black__${_token}`
+    );
+    if (results.message == "successs") {
+      setSnackBarMsg("Cart Added to Orders");
+      handleDeleteCart(idx);
+    } else {
+      setSnackBarMsg(results.message);
     }
   }
   const calculatePrice = () => {
     let totalPrice = 0;
-    if (typeof cart != "undefined") {
-      cart?.products?.forEach((item) => {
-        totalPrice += item.quantity * item.product.productPrice;
-      });
-      return Number(
-        (totalPrice * (1 + cart?.cartTax) * (1 - cart?.cartDiscount)).toFixed(2)
-      );
-    }
-    return 0;
+    cart?.products?.forEach((item) => {
+      totalPrice += item.quantity * item.product.productPrice;
+    });
+    return Number(
+      (totalPrice * (1 + cart?.cartTax) * (1 - cart?.cartDiscount)).toFixed(2)
+    );
   };
   const updateQuantity = (idx: string, newQuantity: string) => {
     const _newQuantity = Number(newQuantity);
-    if (typeof cart != "undefined") {
-      const updatedProductsList: Products[] = cart?.products.map((product) => {
-        if (product.productId == idx) {
-          return { ...product, quantity: _newQuantity };
-        } else {
-          return product;
-        }
-      });
-      const _cart = {
-        ...cart,
-        _id: cart._id || "",
-        cartDesc: cart.cartDesc || "",
-        cartDiscount: cart.cartDiscount || 0,
-        cartTax: cart.cartTax || 0,
-        products: updatedProductsList,
-      };
-      setCart(_cart);
-    }
+    const updatedProductsList: Products[] = cart?.products.map((product) => {
+      if (product.productId == idx) {
+        return { ...product, quantity: _newQuantity };
+      } else {
+        return product;
+      }
+    });
+    const _cart = {
+      ...cart,
+      products: updatedProductsList,
+    };
+    setCart(_cart);
   };
   const updateCartData = async (newText: string, key: string) => {
     let _newText: string | number;
@@ -79,19 +74,14 @@ const CartScreen: React.FC<CartScreenProps> = ({
     } else {
       _newText = newText;
     }
-    if (typeof cart !== "undefined") {
-      const _cart: Cart = {
-        ...cart,
-        cartDesc: cart.cartDesc || "",
-        cartDiscount: cart.cartDiscount || 0,
-        cartTax: cart.cartTax || 0,
-        [key]: _newText,
-      };
-      setCart(_cart);
-    }
+    const _cart: Cart = {
+      ...cart,
+      [key]: _newText,
+    };
+    setCart(_cart);
   };
   const deleteProduct = async (idx: string) => {
-    if (typeof cart != "undefined" && cart?.products.length) {
+    if (cart?.products.length) {
       const newProductsList: Products[] = cart?.products.filter((product) => {
         return product.productId != idx;
       });
@@ -99,133 +89,111 @@ const CartScreen: React.FC<CartScreenProps> = ({
     }
   };
 
-
   return (
     <>
       <Box className={styles.cartSideBar}>
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              position: "relative",
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            position: "relative",
+          }}
+        >
+          <Typography
+            className={styles.closeBtn}
+            onClick={() => {
+              setIsCartOpenWidely(false);
+              setCart({
+                _id: "",
+                cartDesc: "",
+                cartTax: 0,
+                cartDiscount: 0,
+                products: [],
+              });
             }}
           >
-            <Typography
-              className={styles.closeBtn}
-              onClick={() => {
-                setIsCartOpenWidely(false);
-                setCart({
-                  _id: "",
-                  cartDesc: "",
-                  cartTax: 0,
-                  cartDiscount: 0,
-                  products: [],
-                });
-              }}
-            >
-              X
-            </Typography>
-            <Typography
-              sx={{ pt: "15px", pl: "30px", pr: "10px" }}
-              variant="body1"
-            >
-              Description
-            </Typography>
-            <TextField
-              sx={{ my: "10px", width: "70%", mr: "10px" }}
-              required
-              id="cartDesc"
-              variant="standard"
-              onChange={(e) => updateCartData(e.target.value, e.target.id)}
-              value={cart?.cartDesc || ""}
-            />
-          </Box>
-          <Box>
-            {cart?.products?.map((product) => {
-              return (
-                <ListItem
-                  key={product?.productId}
-                  className={styles.productItem}
-                  secondaryAction={
-                    <Typography
-                      sx={{
-                        border: "1px solid grey",
-                        borderRadius: "50%",
-                        p: "8px",
-                      }}
-                    >
-                      {product?.quantity * product?.product.productPrice}$
-                    </Typography>
+            <CloseIcon sx={{color:"secondary.main"}} />
+          </Typography>
+          <TextField
+            sx={{ my: "10px", width: "80%", ml: "45px" }}
+            id="cartDesc"
+            label="Description" 
+            variant="outlined"
+            onChange={(e) => updateCartData(e.target.value, e.target.id)}
+            value={cart?.cartDesc || ""}
+          />
+        </Box>
+
+
+        <Box sx={{ maxHeight: "300px", overflow: "hidden scroll" }}>
+          {cart?.products?.map((product) => {
+            return (
+              <ListItem
+                key={product?.productId}
+                className={styles.productItem}
+                sx={{ width: "300px" }}
+              >
+                <TextField
+                  id="quantity"
+                  label="quantity"
+                  type="number"
+                  sx={{ width: "50px", ml: "10px" }}
+                  onChange={(e) =>
+                    updateQuantity(product.productId, e.target.value)
                   }
+                  value={product?.quantity}
+                  variant="standard"
+                />
+                <ListItemText
+                  className={styles.productData}
+                  secondary={product?.product.productPrice + " $"}
                 >
-                  <Box>
-                    <Typography
-                      className={styles.deleteBtn}
-                      onClick={() => deleteProduct(product.productId)}
-                    >
-                      X
-                    </Typography>
-                  </Box>
-                  <TextField
-                    id="quantity"
-                    label="quantity"
-                    type="number"
-                    sx={{ width: "50px", ml: "10px" }}
-                    onChange={(e) =>
-                      updateQuantity(product.productId, e.target.value)
-                    }
-                    value={product?.quantity}
-                    variant="standard"
-                  />
-                  <ListItemText
-                    className={styles.productData}
-                    secondary={product?.product.productPrice + " $"}
-                  >
-                    {product?.product?.productName}
-                  </ListItemText>
-                </ListItem>
-              );
-            })}
-          </Box>
+                  {product?.product?.productName}
+                </ListItemText>
+                <Typography
+                  sx={{
+                    p: "8px",
+                  }}
+                >
+                  {product?.quantity * product?.product.productPrice}$
+                </Typography>
+                <Typography
+                  className={styles.deleteBtn}
+                  onClick={() => deleteProduct(product.productId)}
+                >
+                  <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
+                </Typography>
+              </ListItem>
+            );
+          })}
         </Box>
         <Box sx={{ justifySelf: "flex-end" }}>
-          <Divider />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ pt: "22px", pl: "10px" }} variant="body1">
-              Discount
-            </Typography>
             <TextField
-              sx={{ my: "10px", width: "20%", mr: "10px" }}
+              sx={{ my: "10px", mx: "auto", width:"95%" }}
               required
               id="cartDiscount"
-              variant="standard"
+              label="Discount" 
+              variant="outlined"
               onChange={(e) => updateCartData(e.target.value, e.target.id)}
               value={cart?.cartDiscount || 0}
             />
-          </Box>
-          <Divider />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ pt: "22px", pl: "10px" }} variant="body1">
-              Tax
-            </Typography>
             <TextField
-              sx={{ my: "10px", width: "20%", mr: "10px" }}
+              sx={{ my: "10px", mx: "auto", width:"95%" }}
               required
               id="cartTax"
-              variant="standard"
+              label="Tax" 
+              variant="outlined"
               onChange={(
                 e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => updateCartData(e.target.value, e.target.id)}
-              value={cart?.cartTax || 0}
+              value={cart?.cartTax}
             />
-          </Box>
-          <Divider />
-          <Button onClick={() => updateCartToDB(cart)}>Checkout</Button>
-          <Divider />
           <Typography className={styles.totalPrice} variant="body1">
-            Total {calculatePrice()} $
+            Total Price: {calculatePrice()} $
           </Typography>
+          <Button sx={{color:"secondary.main", border:"1px solid #7E9578", mt:"5px"}} fullWidth onClick={() => addCartToOrder(cart?._id || "")}>
+              Checkout 
+          </Button>
         </Box>
       </Box>
       <SnackbarComponent snackBarMsg={snackBarMsg} />

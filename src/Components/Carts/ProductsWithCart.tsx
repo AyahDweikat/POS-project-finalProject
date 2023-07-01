@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Cart, Products, ProductObj } from "../Types.tsx";
 import { getProducts } from "../Utils.tsx";
 
@@ -32,9 +27,6 @@ const ProductswithCart: React.FC<ProductsProps> = ({
   useEffect(() => {
     getProducts(_token, setProducts);
   }, [_token]);
-
-
-
   const addProductToCart = (product: ProductObj) => {
     const { _id, productImg, productCode, ...toCart } = product;
     if (typeof cart != "undefined") {
@@ -69,85 +61,61 @@ const ProductswithCart: React.FC<ProductsProps> = ({
         >
           {products.map((product) => {
             return (
-              <Card key={product._id} sx={{ maxWidth: 230, m: "10px" }}>
-                <CardHeader
-                  avatar={
-                    cart ? (
-                      <Button
-                        onClick={
-                          isProductInCart(product._id)
-                            ? () => removeProductFromCart(product._id)
-                            : () => addProductToCart(product)
-                        }
-                      >
-                        {isProductInCart(product._id) ? (
-                          <ShoppingCartIcon />
-                        ) : (
-                          <ShoppingCartOutlinedIcon />
-                        )}
-                      </Button>
-                    ):
-                    null
-                  }
-                  title={product.productName}
-                  subheader={product.productCode}
-                />
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={product.productImg}
-                  alt={product.productName}
-                />
-                <CardContent sx={{ p: 0, mx: 1, pt: "10px" }}>
+              <Card key={product._id} 
+              sx={{
+                maxWidth: 230, 
+                m: "10px", 
+                p:"5px", 
+                backgroundColor:isProductInCart(product._id) ? "primary.main":"primary.light",
+              }}
+              onClick={
+                isProductInCart(product._id)
+                  ? () => removeProductFromCart(product._id)
+                  : () => addProductToCart(product)
+              }
+              >
+                <Typography 
+                sx={{color:"primary.dark",
+                  fontWeight:"400",
+                  fontSize:"18px",
+                  textTransform: "capitalize"
+                  }}
+                  >
+                    {product.productName}
+                </Typography>
+                <img src={product.productImg} alt={product.productName} height='90px' width='120px' />
+                <Box sx={{display:"flex", justifyContent:"space-around"}}>
                   <Typography
                     variant="body1"
+                    id="productPrice"
                     sx={{
-                      textAlign: "left",
-                      fontSize: "18px",
-                      p: 0,
-                      m: 0,
-                      textTransform: "capitalize",
-                      outline: "none",
+                      color:"primary.dark",
+                      fontWeight:"400",
+                      fontSize:"18px",
                     }}
-                    color="text.primary"
-                    id="productCategory"
-                  >
-                    {product.productCategory}
+                    >
+                    {product.productPrice} $
                   </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      p: 0,
-                      mx: 0,
-                      pt: "5px",
-                      alignItems: "flex-end",
-                    }}
-                  >
+                {/* {cart ? (
                     <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      id="productPrice"
-                      sx={{
-                        textTransform: "capitalize",
-                        outline: "none",
-                      }}
+                    sx={{color:"primary.main"}}
+                      onClick={
+                        isProductInCart(product._id)
+                          ? () => removeProductFromCart(product._id)
+                          : () => addProductToCart(product)
+                      }
                     >
-                      {product.productPrice} $
+                      {isProductInCart(product._id) ? (
+                        <ShoppingCartIcon />
+                      ) : (
+                        <ShoppingCartOutlinedIcon />
+                      )}
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      id="measureUnit"
-                      sx={{
-                        textTransform: "capitalize",
-                        outline: "none",
-                      }}
-                    >
-                      {product.measureUnit}
-                    </Typography>
-                  </Box>
-                </CardContent>
+                  ):
+                  null
+                } */}
+
+                </Box>
               </Card>
             );
           })}

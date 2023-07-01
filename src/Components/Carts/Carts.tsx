@@ -1,83 +1,79 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchApiWithAuthNoBody } from "../fetchApi";
+
 import CartItem from "./CartItem";
 import { Button, Typography } from "@mui/material";
 import { Cart } from "../Types";
 import CartScreen from "./CartScreen";
 import { nanoid } from "nanoid";
 import ProductswithCart from "./ProductsWithCart";
+import { useLocation, useNavigate } from "react-router-dom";
 function Carts() {
   const [carts, setCarts] = useState<Cart[]>([]);
-  const [cartToOpen, setCartToOpen] = useState<Cart>();
-  const _token: string | null = localStorage.getItem("token") || "";
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [openedCart, setOpenedCart] = useState<Cart>();
   const [isCartOpenWidely, setIsCartOpenWidely] = useState<boolean>(false);
   const addNewCart = () => {
-    const newCart:Cart = {_id:nanoid(), cartDesc:"", cartTax:0, cartDiscount:0, products:[]};
+    const newCart:Cart = {_id:nanoid(), cartDesc:"NewCart", cartTax:0, cartDiscount:0, products:[]};
     setCarts([newCart, ...carts])
   };
-  const openCart = (idx: string) => {
+  const handleOpenCart = (idx: string) => {
     const _cartToOpen: Cart | undefined = carts?.find(
       (cart) => cart._id == idx
     );
-    setCartToOpen(_cartToOpen);
+    setOpenedCart(_cartToOpen);
     setIsCartOpenWidely(false);
     setIsCartOpenWidely(true);
   }; 
-  useEffect(()=>{
-    if(typeof cartToOpen !=='undefined'){
+  function saveChanges(openedCart:Cart|undefined){
+    if(typeof openedCart !=='undefined'){
       const _cartToOpen: Cart[]= carts?.map((cart) => {
-        if(cart._id == cartToOpen._id){
-          return cartToOpen;
+        if(cart._id == openedCart._id){
+          return openedCart;
         } else {
           return cart;
         }
       });
       setCarts(_cartToOpen)
     }
-  }, [cartToOpen])
-  const fetchData = async (_token: string) => {
-    const results = await fetchApiWithAuthNoBody(
-      "GET",
-      `https://posapp.onrender.com/cart/getCarts`,
-      `black__${_token}`
-    );
-    if (results.CartList) {
-      setCarts(results.CartList);
-    }
-    return results;
+  }
+  const handleDeleteCart = async (idx: string) => {
+    navigate(location.pathname);
+    const newCart:Cart[] = carts.filter((cart)=>{
+      return cart._id !== idx;
+    })
+    setCarts(newCart)
+    setIsCartOpenWidely(false)
   };
-  useEffect(() => {
-    fetchData(_token);
-  }, [_token]);
+  useEffect(()=>{
+    saveChanges(openedCart)
+  }, [openedCart])
   return (
     <>
-    <Box sx={{display:"flex", justifyContent:"space-between"}}>
-      <Box sx={{ width: "280px", borderRight: "1px solid grey" }}>
+    <Box sx={{display:"flex", justifyContent:"space-between", position:"relative"}}>
+      <Box sx={{width:"100%" }}>
+        <Button sx={{my:"10px"}} variant="contained" onClick={() => addNewCart()}>Add New Cart</Button>
         <Typography variant="body1">Carts List</Typography>
-        <Button onClick={() => addNewCart()}>Add New Cart</Button>
-        <Box>
-
+        <Box sx={{display:"flex", borderBottom: "1px solid grey", flexWrap:"wrap", m:"10px", gap:"10px"}}>
           {carts.length ? carts.map((cart) => {
             return (
               <CartItem
-                openCart={openCart}
+              handleOpenCart={handleOpenCart}
+              handleDeleteCart={handleDeleteCart}
                 key={cart._id}
-                _token={_token}
                 cart={cart}
-                fetchData={fetchData}
               />
             );
-          }):<Typography>Nothing in the cart</Typography>}
+          }):<Typography sx={{textAlign:"center", m:"auto"}}>No Carts</Typography>}
         </Box>
+        <ProductswithCart cart={openedCart} setCart={setOpenedCart} />
       </Box>
-      <Box>
-        <ProductswithCart cart={cartToOpen} setCart={setCartToOpen} />
-      </Box>
-      {isCartOpenWidely && (
+      {isCartOpenWidely && openedCart && (
         <CartScreen
-          cart={cartToOpen}
-          setCart={setCartToOpen}
+        handleDeleteCart={handleDeleteCart}
+          cart={openedCart}
+          setCart={setOpenedCart}
           setIsCartOpenWidely={setIsCartOpenWidely}
         />
       )}

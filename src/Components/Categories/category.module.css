@@ -10,6 +10,7 @@
   margin: auto;
   z-index:50;
   box-shadow: 0 0 0 50vmax rgba(0,0,0,.5);
+  color:#7e9578;
 }
 .categoryList {
   width: 100%;
