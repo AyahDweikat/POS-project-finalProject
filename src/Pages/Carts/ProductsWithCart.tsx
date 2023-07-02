@@ -1,15 +1,15 @@
 import Card from "@mui/material/Card";
 import { Box ,Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Cart, Products, ProductObj } from "../../Utils/Types.tsx";
-import { _token, getProducts } from "../../Utils/Utils.tsx";
+import useGetProducts from "../../useHooks/useGetProducts.tsx";
 
 export interface ProductsProps {
   cart: Cart | undefined;
   setCart: (cart: Cart) => void;
 }
 const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
-  const [products, setProducts] = useState<ProductObj[]>([]);
+  const products = useGetProducts()
   const isProductInCart = (idx: string) => {
     if (cart?.products.find((item: Products) => item.productId == idx)) {
       return true;
@@ -18,9 +18,6 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
     }
   };
 
-  useEffect(() => {
-    getProducts(_token, setProducts);
-  }, []);
   const addProductToCart = (product: ProductObj) => {
     const { _id, productImg, productCode, ...toCart } = product;
     if (typeof cart != "undefined") {

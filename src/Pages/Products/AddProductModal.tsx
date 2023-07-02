@@ -2,11 +2,12 @@ import { Button, TextField, Box, Typography, MenuItem } from "@mui/material";
 import axios from "axios";
 import { Formik } from "formik";
 import SnackbarComponent from "../../SubComponents/Snackbar";
-import React, { useEffect, ChangeEvent, useState } from "react";
-import { CategoryObj, ProductInputObj, ProductObj } from "../../Utils/Types";
+import React, { ChangeEvent, useState } from "react";
+import { ProductInputObj, ProductObj } from "../../Utils/Types";
 import { fetchApiWithAuthAndBody } from "../../Utils/fetchApi";
-import { _token, getCategories, getProducts } from "../../Utils/Utils";
+import { _token, getProducts } from "../../Utils/Utils";
 import styles from "./product.module.css";
+import useGetCategory from "../../useHooks/useGetCategory";
 
 interface addProductModalProps {
   handleCloseForm: () => void;
@@ -23,11 +24,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
 }) => {
   const [file, setFile] = useState<File>();
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  const [categories, setCategories] = useState<CategoryObj[]>([]);
-  
-  useEffect(() => {
-    getCategories(_token, setCategories);
-  }, []);
+  const categories = useGetCategory()
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);

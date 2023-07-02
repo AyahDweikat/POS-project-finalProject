@@ -28,7 +28,9 @@ const ProductsComponent = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [filterValue, setFilterValue] = useState<string>("");
   const [isSortByName, setIsSortByName] = useState<boolean>(false);
-  
+  useEffect(() => {
+    getProducts(_token, setProducts);
+  }, []);
   const sorting = (isSortByName:boolean, products:ProductObj[])=>{
     if(isSortByName){
       const _products = [...products];
@@ -37,15 +39,6 @@ const ProductsComponent = () => {
       return products;
     }
   }
-
-  const displayedProducts = filterByCategory(
-    filterValue,
-    searchResults(searchValue,  sorting(isSortByName, products))
-  );
-  useEffect(() => {
-    getProducts(_token, setProducts);
-  }, []);
-
   function searchResults(searchValue: string, products: ProductObj[]) {
     return products.filter((product: ProductObj) => {
       return (
@@ -75,6 +68,10 @@ const ProductsComponent = () => {
       return product.productCategory == filterValue;
     });
   }
+  const displayedProducts = filterByCategory(
+    filterValue,
+    searchResults(searchValue,  sorting(isSortByName, products))
+  );
   const deleteProduct = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
