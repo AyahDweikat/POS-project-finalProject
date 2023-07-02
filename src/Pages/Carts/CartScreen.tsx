@@ -10,8 +10,6 @@ import SnackbarComponent from "../../SubComponents/Snackbar";
 import { _token } from "../../Utils/Utils";
 import styles from "./carts.module.css";
 
-
-
 interface CartScreenProps {
   setIsCartOpenWidely: (state: boolean) => void;
   cart: Cart;
@@ -25,7 +23,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
   handleDeleteCart,
 }) => {
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-
   async function addCartToOrder(idx: string) {
     const { _id, ...newCart } = cart;
     const results = await fetchApiWithAuthAndBody(
@@ -93,7 +90,8 @@ const CartScreen: React.FC<CartScreenProps> = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            flexDirection: "column",
+            justifyContent: "flex-start",
             position: "relative",
           }}
         >
@@ -110,87 +108,100 @@ const CartScreen: React.FC<CartScreenProps> = ({
               });
             }}
           >
-            <CloseIcon sx={{color:"secondary.main"}} />
+            <CloseIcon sx={{ color: "secondary.main" }} />
           </Typography>
           <TextField
             sx={{ my: "10px", width: "80%", ml: "45px" }}
             id="cartDesc"
-            label="Description" 
+            label="Description"
             variant="outlined"
+            size='small'
             onChange={(e) => updateCartData(e.target.value, e.target.id)}
             value={cart?.cartDesc || ""}
           />
+          <Box sx={{ maxHeight: "340px", overflow: "hidden auto" }}>
+            {cart?.products?.map((product) => {
+              return (
+                <ListItem
+                  key={product?.productId}
+                  className={styles.productItem}
+                  sx={{ width: "300px" }}
+                >
+                  <TextField
+                    id="quantity"
+                    label="quantity"
+                    type="number"
+                    size="small"
+                    sx={{ width: "50px", ml: "10px" }}
+                    onChange={(e) =>
+                      updateQuantity(product.productId, e.target.value)
+                    }
+                    value={product?.quantity}
+                    variant="standard"
+                  />
+                  <ListItemText
+                    className={styles.productData}
+                    secondary={product?.product.productPrice + " $"}
+                  >
+                    {product?.product?.productName}
+                  </ListItemText>
+                  <Typography
+                    sx={{
+                      p: "8px",
+                    }}
+                  >
+                    {product?.quantity * product?.product.productPrice}$
+                  </Typography>
+                  <Typography
+                    className={styles.deleteBtn}
+                    onClick={() => deleteProduct(product.productId)}
+                  >
+                    <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
+                  </Typography>
+                </ListItem>
+              );
+            })}
+          </Box>
         </Box>
 
-
-        <Box sx={{ maxHeight: "300px", overflow: "hidden scroll" }}>
-          {cart?.products?.map((product) => {
-            return (
-              <ListItem
-                key={product?.productId}
-                className={styles.productItem}
-                sx={{ width: "300px" }}
-              >
-                <TextField
-                  id="quantity"
-                  label="quantity"
-                  type="number"
-                  sx={{ width: "50px", ml: "10px" }}
-                  onChange={(e) =>
-                    updateQuantity(product.productId, e.target.value)
-                  }
-                  value={product?.quantity}
-                  variant="standard"
-                />
-                <ListItemText
-                  className={styles.productData}
-                  secondary={product?.product.productPrice + " $"}
-                >
-                  {product?.product?.productName}
-                </ListItemText>
-                <Typography
-                  sx={{
-                    p: "8px",
-                  }}
-                >
-                  {product?.quantity * product?.product.productPrice}$
-                </Typography>
-                <Typography
-                  className={styles.deleteBtn}
-                  onClick={() => deleteProduct(product.productId)}
-                >
-                  <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
-                </Typography>
-              </ListItem>
-            );
-          })}
-        </Box>
         <Box sx={{ justifySelf: "flex-end" }}>
+          <Box sx={{ display: "flex", gap: "10px" }}>
             <TextField
-              sx={{ my: "10px", mx: "auto", width:"95%" }}
+              sx={{ my: "10px", mx: "auto", width: "95%" }}
               required
               id="cartDiscount"
-              label="Discount" 
+              label="Discount"
+              size="small"
               variant="outlined"
               onChange={(e) => updateCartData(e.target.value, e.target.id)}
               value={cart?.cartDiscount || 0}
             />
             <TextField
-              sx={{ my: "10px", mx: "auto", width:"95%" }}
+              sx={{ my: "10px", mx: "auto", width: "95%" }}
               required
               id="cartTax"
-              label="Tax" 
+              label="Tax"
+              size="small"
               variant="outlined"
               onChange={(
                 e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => updateCartData(e.target.value, e.target.id)}
               value={cart?.cartTax}
             />
+          </Box>
           <Typography className={styles.totalPrice} variant="body1">
             Total Price: {calculatePrice()} $
           </Typography>
-          <Button sx={{color:"secondary.main", border:"1px solid #7E9578", mt:"5px"}} fullWidth onClick={() => addCartToOrder(cart?._id || "")}>
-              Checkout 
+          <Button
+            sx={{
+              color: "secondary.main",
+              border: "1px solid #7E9578",
+              mt: "5px",
+            }}
+            fullWidth
+            onClick={() => addCartToOrder(cart?._id || "")}
+          >
+            Checkout
           </Button>
         </Box>
       </Box>

@@ -54,7 +54,7 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
               m: "10px",
               p: "5px",
               backgroundColor: isProductInCart(product._id)
-                ? "primary.main"
+                ? "#bde5b3"
                 : "primary.light",
             }}
             onClick={

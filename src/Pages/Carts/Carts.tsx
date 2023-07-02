@@ -52,10 +52,9 @@ function Carts() {
   return (
     <>
     <Box sx={{display:"flex", justifyContent:"space-between", position:"relative"}}>
-      <Box sx={{width:"100%" }}>
+      <Box sx={{width:isCartOpenWidely ? "78%":"100%" }}>
         <Button sx={{my:"10px"}} variant="contained" onClick={() => addNewCart()}>Add New Cart</Button>
-        <Typography variant="body1">Carts List</Typography>
-        <Box sx={{display:"flex", borderBottom: "1px solid grey", flexWrap:"wrap", m:"10px", gap:"10px"}}>
+        <Box sx={{display:"flex", flexWrap:"wrap", m:"10px", gap:"10px"}}>
           {carts.length ? carts.map((cart) => {
             return (
               <CartItem
@@ -65,9 +64,14 @@ function Carts() {
                 cart={cart}
               />
             );
-          }):<Typography sx={{textAlign:"center", m:"auto"}}>No Carts</Typography>}
+          }):
+          <Typography sx={{ width:"20%", mb:"10px", textAlign:"center", m:"auto", color:"green"}}>No Carts!</Typography>
+          }
         </Box>
-        <ProductswithCart cart={openedCart} setCart={setOpenedCart} />
+        <Box>
+          <Typography sx={{fontWeight:"600", fontSize:"25px", textAlign:'left', color:"primary.main"}}>Products List</Typography>
+          <ProductswithCart cart={openedCart} setCart={setOpenedCart} />
+        </Box>
       </Box>
       {isCartOpenWidely && openedCart && (
         <CartScreen
