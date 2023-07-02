@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
-import { fetchApi } from "../Utils/fetchApi.ts";
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { GlobalContext } from "../../Context/context.tsx";
-import { LoginObj } from '../Utils/Types.tsx';
 import styles from './login.module.css';
 import { Box } from '@mui/material';
 import { useState } from 'react';
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+import { LoginObj } from "../../Utils/Types.tsx";
+import { fetchApi } from "../../Utils/fetchApi.ts";
 
 
 

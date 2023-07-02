@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './Pages/ErrorPage/ErrorPage.tsx';
-import Carts from './Components/Carts/Carts.tsx';
-import Categories from './Components/Categories/Categories.tsx';
-import Units from './Components/UnitsOfMeasure/Units.tsx';
+import Carts from './Pages/Carts/Carts.tsx';
+import Categories from './Pages/Categories/Categories.tsx';
+import Units from './Pages/UnitsOfMeasure/Units.tsx';
 import Signup from './Components/Signup/Signup.tsx';
 import Login from './Components/Login/Login.tsx';
 import Layout from './Components/Layout/Layout.tsx';
 import IsAuth from './Components/IsAuth/IsAuth.tsx';
 import RequireAuth from './Components/RequireAuth/RequireAuth.tsx';
-import Profile from './Components/Profile/Profile.tsx';
+import Profile from './Pages/Profile/Profile.tsx';
 import App from './App.tsx';
-import ProductsComponent from './Components/Products/Products.tsx';
+import ProductsComponent from './Pages/Products/Products.tsx';
 
 const router = createBrowserRouter([
   {

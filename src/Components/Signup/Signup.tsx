@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button, TextField, Typography, Box } from "@mui/material";
 import { Formik } from "formik";
-import { fetchApi } from "../Utils/fetchApi.ts";
 import { useNavigate } from "react-router-dom";
-import { SignUpObj } from "../Utils/Types.tsx";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import styles from './signup.module.css';
+import { fetchApi } from "../../Utils/fetchApi.ts";
+import { SignUpObj } from "../../Utils/Types.tsx";
 
 function Signup() {
   const navigate = useNavigate();

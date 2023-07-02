@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { _token } from "../Utils/Utils";
+import { _token } from "../../Utils/Utils.tsx";
+
 
 function IsAuth({ children }:{children: React.ReactNode}) {
     const locate = useLocation().pathname;

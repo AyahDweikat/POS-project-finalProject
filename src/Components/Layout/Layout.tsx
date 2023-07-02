@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { GlobalContext } from './../../Context/context.tsx';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from "../Utils/theme.ts";
-import { _token } from "../Utils/Utils.tsx";
+import { _token } from "../../Utils/Utils.tsx";
+import theme from "../../Utils/theme.ts";
+
 
 
 

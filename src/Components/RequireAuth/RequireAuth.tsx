@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { _token } from "../Utils/Utils";
+import { _token } from "../../Utils/Utils.tsx";
 
 function RequireAuth({ children }:{children: React.ReactNode}) {
   return (

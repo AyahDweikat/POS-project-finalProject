@@ -17,6 +17,20 @@ export const sortFunctionByStrings = (array: CategoryObj[]) => {
   });
 };
 
+export const sortByName = (array: ProductObj[]) => {
+  return array.sort((a: ProductObj, b: ProductObj) => {
+    const fa = a.productName.toLowerCase(),
+      fb = b.productName.toLowerCase();
+    if (fa < fb) {
+      return -1;
+    }
+    if (fa > fb) {
+      return 1;
+    }
+    return 0;
+  });
+};
+
 export const getCategories = async (
   _token: string,
   setCategories: (array: CategoryObj[]) => void
