@@ -1,8 +1,12 @@
+import React, {useState}  from "react";
 import Card from "@mui/material/Card";
-import { Box ,Typography } from "@mui/material";
-import React from "react";
+import { Box ,Button,Typography } from "@mui/material";
 import { Cart, Products, ProductObj } from "../../Utils/Types.tsx";
 import useGetProducts from "../../useHooks/useGetProducts.tsx";
+import { filterByCategory, searchResults, sortByPorductName } from "../../Utils/Utils.tsx";
+import SearchForm from "../Products/SearchForm.tsx";
+import FilterComponent from "../Products/FilterComponent.tsx";
+import styles from "./carts.module.css";
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -10,6 +14,14 @@ export interface ProductsProps {
 }
 const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
   const products = useGetProducts()
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [filterValue, setFilterValue] = useState<string>("");
+  const [isSortByName, setIsSortByName] = useState<boolean>(false);
+  
+  const displayedProducts = filterByCategory(
+    filterValue,
+    searchResults(searchValue,  sortByPorductName(isSortByName, products))
+  );
   const isProductInCart = (idx: string) => {
     if (cart?.products.find((item: Products) => item.productId == idx)) {
       return true;
@@ -17,7 +29,6 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
       return false;
     }
   };
-
   const addProductToCart = (product: ProductObj) => {
     const { _id, productImg, productCode, ...toCart } = product;
     if (typeof cart != "undefined") {
@@ -40,12 +51,24 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
   return (
     <Box
       sx={{
-        display: "flex",
         py: "10px",
         width: "100%",
       }}
     >
-      {products.map((product) => {
+      <Box className={styles.productPage}> 
+        <SearchForm handleChangeSearchValue={setSearchValue} />
+        <FilterComponent filterValue={filterValue} handleChangeFilterValue={setFilterValue} />
+        <Button
+          className={styles.sortButton}
+          sx={{ my: "10px", backgroundColor: isSortByName?"primary.dark":"primary.main" }}
+          variant="contained"
+          onClick={()=>setIsSortByName(!isSortByName)}
+        >
+          Sort By Name 
+        </Button>
+      </Box>
+      <Box sx={{display: "flex"}}>
+      {displayedProducts.map((product) => {
         return (
           <Card
             key={product._id}
@@ -95,6 +118,8 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
           </Card>
         );
       })}
+
+      </Box>
     </Box>
   );
 };

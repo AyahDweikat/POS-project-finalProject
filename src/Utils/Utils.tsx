@@ -44,7 +44,6 @@ export const getCategories = async (
     setCategories(sortFunctionByStrings(results.CategoryList));
   }
 };
-
 export const getUnits = async (
   _token: string,
   setUnits: (arr: UnitObj[]) => void
@@ -71,3 +70,40 @@ export const getProducts = async (
     setProducts(results.ProductList);
   }
 };
+export const sortByPorductName = (isSortByName: boolean, products: ProductObj[]) => {
+  if (isSortByName) {
+    const _products = [...products];
+    return sortByName(_products);
+  } else {
+    return products;
+  }
+};
+export function searchResults(searchValue: string, products: ProductObj[]) {
+  return products.filter((product: ProductObj) => {
+    return (
+      product.productName
+        .toLocaleLowerCase()
+        .includes(searchValue.toLocaleLowerCase()) ||
+      String(product.productCode)
+        .toLocaleLowerCase()
+        .includes(searchValue.toLocaleLowerCase()) ||
+      product.measureUnit
+        .toLocaleLowerCase()
+        .includes(searchValue.toLocaleLowerCase()) ||
+      product.productCategory
+        .toLocaleLowerCase()
+        .includes(searchValue.toLocaleLowerCase()) ||
+      String(product.productPrice)
+        .toLocaleLowerCase()
+        .includes(searchValue.toLocaleLowerCase())
+    );
+  });
+}
+export function filterByCategory(filterValue: string, products: ProductObj[]) {
+  if (!filterValue) {
+    return products;
+  }
+  return products.filter((product) => {
+    return product.productCategory == filterValue;
+  });
+}

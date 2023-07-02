@@ -5,7 +5,7 @@ import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import AddProductModal from "./AddProductModal.tsx";
 import { Cart, ProductObj } from "../../Utils/Types.tsx";
 import { fetchApiWithAuthNoBody } from "../../Utils/fetchApi.ts";
-import { _token, getProducts, sortByName } from "../../Utils/Utils.tsx";
+import { _token, filterByCategory, getProducts, searchResults, sortByPorductName } from "../../Utils/Utils.tsx";
 import TableOfProducts from "./TableOfProducts.tsx";
 import FilterComponent from "./FilterComponent.tsx";
 import SearchForm from "./SearchForm.tsx";
@@ -31,46 +31,9 @@ const ProductsComponent = () => {
   useEffect(() => {
     getProducts(_token, setProducts);
   }, []);
-  const sorting = (isSortByName:boolean, products:ProductObj[])=>{
-    if(isSortByName){
-      const _products = [...products];
-      return sortByName(_products)
-    } else {
-      return products;
-    }
-  }
-  function searchResults(searchValue: string, products: ProductObj[]) {
-    return products.filter((product: ProductObj) => {
-      return (
-        product.productName
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase()) ||
-        String(product.productCode)
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase()) ||
-        product.measureUnit
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase()) ||
-        product.productCategory
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase()) ||
-        String(product.productPrice)
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase())
-      );
-    });
-  }
-  function filterByCategory(filterValue: string, products: ProductObj[]) {
-    if (!filterValue) {
-      return products;
-    }
-    return products.filter((product) => {
-      return product.productCategory == filterValue;
-    });
-  }
   const displayedProducts = filterByCategory(
     filterValue,
-    searchResults(searchValue,  sorting(isSortByName, products))
+    searchResults(searchValue,  sortByPorductName(isSortByName, products))
   );
   const deleteProduct = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
