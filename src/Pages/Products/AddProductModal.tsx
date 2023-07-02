@@ -33,9 +33,6 @@ const AddProductModal: React.FC<addProductModalProps> = ({
       setFile(e.target.files[0]);
     }
   };
-  
-  
-
   const addProduct = async (values: ProductInputObj) => {
     const {
       productName,
