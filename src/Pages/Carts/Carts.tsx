@@ -1,13 +1,13 @@
-import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-
-import CartItem from "./CartItem";
-import { Button, Typography } from "@mui/material";
-import { Cart } from "../Types";
-import CartScreen from "./CartScreen";
+import { Button, Typography, Box } from "@mui/material";
 import { nanoid } from "nanoid";
-import ProductswithCart from "./ProductsWithCart";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import CartItem from "./CartItem";
+import CartScreen from "./CartScreen";
+import ProductswithCart from "./ProductsWithCart";
+import { Cart } from "../../Utils/Types";
+
+
 function Carts() {
   const [carts, setCarts] = useState<Cart[]>([]);
   const navigate = useNavigate();

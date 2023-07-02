@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ErrorPage from './Components/ErrorPage.tsx';
+import ErrorPage from './Pages/ErrorPage/ErrorPage.tsx';
 import Carts from './Components/Carts/Carts.tsx';
 import Categories from './Components/Categories/Categories.tsx';
 import Units from './Components/UnitsOfMeasure/Units.tsx';

@@ -1,10 +1,9 @@
 import React from "react";
-import { Button, TextField } from "@mui/material";
-import { Formik } from "formik";
-import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
+import { Formik } from "formik";
 import styles from "./units.module.css";
-import { InputsObj, UnitObj } from "../Types";
+import { InputsObj, UnitObj } from "../../Utils/Types";
 
 interface addUnitModalProps {
   handleAddUnit: (obj: InputsObj) => void;

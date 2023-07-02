@@ -10,21 +10,19 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Button, IconButton, Typography, TextField, Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { fetchApiWithAuthNoBody } from "../fetchApi";
-import { useLocation, useNavigate } from "react-router-dom";
-import AddProductModal from "./AddProductModal.tsx";
-import { Cart, CategoryObj, ProductObj } from "../Types.tsx";
-import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
-
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+import AddProductModal from "./AddProductModal.tsx";
+import { Cart, CategoryObj, ProductObj } from "../../Utils/Types.tsx";
+import { fetchApiWithAuthNoBody } from "../../Utils/fetchApi.ts";
+import { _token, getCategories, getProducts } from "../../Utils/Utils.tsx";
 import styles from "./product.module.css";
-import { getCategories, getProducts, sortFunctionByStrings } from "../Utils.tsx";
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -47,7 +45,6 @@ const ProductsComponent = () => {
   const [isOpenAddProductModal, setIsOpenAddProductModal] =
     useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
-  const _token: string | null = localStorage.getItem("token") || "";
   const [idToUpdate, setIdToUpdate] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
   const [filterValue, setFilterValue] = useState<string>("");
@@ -57,7 +54,7 @@ const ProductsComponent = () => {
   useEffect(() => {
     getProducts(_token, setProducts);
     getCategories(_token, setCategories);
-  }, [_token]);
+  }, []);
 
   const [categories, setCategories] = useState<CategoryObj[]>([]);
 

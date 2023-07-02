@@ -1,8 +1,7 @@
 import React from "react";
-import { Button, TextField, Box } from "@mui/material";
+import { Button, TextField, Box, Typography } from "@mui/material";
 import { Formik } from "formik";
-import Typography from "@mui/material/Typography";
-import { CategoryObj } from "../Types.tsx";
+import { CategoryObj } from "../../Utils/Types.tsx";
 import styles from "./category.module.css";
 
 interface CategpryModalProps {

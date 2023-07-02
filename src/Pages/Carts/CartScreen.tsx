@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Typography, TextField } from "@mui/material";
-import React, { useState } from "react";
-import { ListItemText, ListItem } from "@mui/material";
-import { Cart, Products } from "../Types";
-import { Divider } from "@mui/material";
-import { Button } from "@mui/material";
-import { fetchApiWithAuthAndBody } from "../fetchApi";
-import styles from "./carts.module.css";
-import SnackbarComponent from "../../SubComponents/Snackbar";
+import { Box, Typography, TextField, Button } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import CloseIcon from "@mui/icons-material/Close";
+import { ListItemText, ListItem } from "@mui/material";
+import React, { useState } from "react";
+import { Cart, Products } from "../../Utils/Types";
+import { fetchApiWithAuthAndBody } from "../../Utils/fetchApi";
+import SnackbarComponent from "../../SubComponents/Snackbar";
+import { _token } from "../../Utils/Utils";
+import styles from "./carts.module.css";
 
 
 
@@ -25,7 +24,6 @@ const CartScreen: React.FC<CartScreenProps> = ({
   setIsCartOpenWidely,
   handleDeleteCart,
 }) => {
-  const _token: string = localStorage.getItem("token") || "";
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
 
   async function addCartToOrder(idx: string) {

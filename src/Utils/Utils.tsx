@@ -1,6 +1,8 @@
 import { CategoryObj, ProductObj, UnitObj } from "./Types";
 import { fetchApiWithAuthNoBody } from "./fetchApi";
 
+export const _token: string = localStorage.getItem("token") || "";
+
 export const sortFunctionByStrings = (array: CategoryObj[]) => {
   return array.sort((a: CategoryObj, b: CategoryObj) => {
     const fa = a.category.toLowerCase(),

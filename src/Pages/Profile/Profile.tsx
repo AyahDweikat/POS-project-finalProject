@@ -1,7 +1,8 @@
 import { Avatar, Typography, Box } from "@mui/material";
-import { useEffect, useState, ChangeEvent } from "react";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import { fetchApiWithAuthNoBody, fetchImage } from "../fetchApi";
+import { useEffect, useState, ChangeEvent } from "react";
+import { fetchApiWithAuthNoBody, fetchImage } from "../../Utils/fetchApi";
+import { _token } from "../../Utils/Utils";
 import styles from "./profile.module.css";
 
 interface User {
@@ -11,7 +12,6 @@ interface User {
   profilePic: string;
 }
 function Profile() {
-  const _token: string | null = localStorage.getItem("token") || "";
   const [userData, setUserData] = useState<User>({
     _id: "",
     userName: "",
@@ -31,7 +31,7 @@ function Profile() {
   };
   useEffect(() => {
     fetchUserData(_token);
-  }, [_token]);
+  }, []);
   const sendImage = async(formData: FormData)=>{
     const results = await fetchImage(
       "PATCH",

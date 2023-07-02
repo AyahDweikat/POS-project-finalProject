@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,32 +6,25 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-// import List from "@mui/material/List";
-// import ListItem from "@mui/material/ListItem";
-// import ListItemIcon from "@mui/material/ListItemIcon";
-// import ListItemText from "@mui/material/ListItemText";
-// import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Button, IconButton, Box, Typography } from "@mui/material";
 import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
+import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
-} from "../fetchApi.ts";
-import { Category, CategoryObj } from "../Types.tsx";
-import styles from "./category.module.css";
-import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
+} from "../../Utils/fetchApi.ts";
+import { Category, CategoryObj } from "../../Utils/Types.tsx";
 import CategoryForm from "./CategoryForm.tsx";
-import { getCategories } from "../Utils.tsx";
+import { _token, getCategories } from "../../Utils/Utils.tsx";
+import styles from "./category.module.css";
 
 export default function Categories() {
   const navigate = useNavigate();
   const location = useLocation();
-  const _token: string | null = localStorage.getItem("token") || "";
   const [categories, setCategories] = useState<CategoryObj[]>([]);
-
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [idToUpdate, setIdToUpdate] = useState<string>("");
   const [categoryToUpdate, setCategoryToUpdate] = useState<CategoryObj>();
@@ -41,7 +33,7 @@ export default function Categories() {
 
   useEffect(() => {
     getCategories(_token, setCategories);
-  }, [_token]);
+  }, []);
   const deleteCategory = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",

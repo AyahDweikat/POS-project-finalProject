@@ -1,15 +1,12 @@
-import React, { useEffect } from "react";
 import { Button, TextField, Box, Typography, MenuItem } from "@mui/material";
-// import MenuItem from '@mui/material/MenuItem';
-import { Formik } from "formik";
-import styles from "./product.module.css";
-import { CategoryObj, ProductInputObj, ProductObj } from "../Types";
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
-import { fetchApiWithAuthAndBody } from "../fetchApi";
+import { Formik } from "formik";
 import SnackbarComponent from "../../SubComponents/Snackbar";
-import { getCategories, getProducts, sortFunctionByStrings } from "../Utils";
-// import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, ChangeEvent, useState } from "react";
+import { CategoryObj, ProductInputObj, ProductObj } from "../../Utils/Types";
+import { fetchApiWithAuthAndBody } from "../../Utils/fetchApi";
+import { _token, getCategories, getProducts } from "../../Utils/Utils";
+import styles from "./product.module.css";
 
 interface addProductModalProps {
   handleCloseForm: () => void;
@@ -27,11 +24,10 @@ const AddProductModal: React.FC<addProductModalProps> = ({
   const [file, setFile] = useState<File>();
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [categories, setCategories] = useState<CategoryObj[]>([]);
-  const _token: string | null = localStorage.getItem("token") || "";
   
   useEffect(() => {
     getCategories(_token, setCategories);
-  }, [_token]);
+  }, []);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);

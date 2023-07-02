@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { GlobalContext } from './../../Context/context.tsx';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from "./theme.ts";
+import theme from "../Utils/theme.ts";
+import { _token } from "../Utils/Utils.tsx";
 
 
 
@@ -9,8 +10,7 @@ function Layout({ children }:{children: React.ReactNode}) {
   const [user, setUser] = useState<string>("");
   const [token, setToken] = useState<string>("");
   useEffect(()=>{
-    const _token:(string|null) = localStorage.getItem("token");
-    setToken(_token||"")
+    setToken(_token)
   },[])
   const auth = {
     user,

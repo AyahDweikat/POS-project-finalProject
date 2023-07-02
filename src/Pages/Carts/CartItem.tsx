@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import IconButton from "@mui/material/IconButton";
-import { Button } from "@mui/material";
+import { Button, IconButton, CardHeader, Card } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { Cart } from "../Types";
-import styles from './carts.module.css';
+import { Cart } from "../../Utils/Types";
+// import styles from './carts.module.css';
+
 interface CartItemProps {
   cart: Cart;
   handleOpenCart: (idx: string) => void;
