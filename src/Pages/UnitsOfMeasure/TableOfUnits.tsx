@@ -104,7 +104,7 @@ const TableOfUnits :React.FC<UnitsTableProps> = ({handleDeleteUnit, units, handl
         </Table>
       </TableContainer>
       : 
-      <Typography>No Units Data</Typography>
+      <Typography sx={{ width:"20%", mb:"10px", textAlign:"center", m:"auto", color:"green"}}>No Units!</Typography>
       }
     </>
     

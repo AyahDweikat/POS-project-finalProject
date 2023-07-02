@@ -1,5 +1,4 @@
 import React from "react";
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,7 +10,6 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditLocationAltOutlinedIcon from "@mui/icons-material/EditLocationAltOutlined";
 import { IconButton, Typography } from "@mui/material";
 import { ProductObj } from "../../Utils/Types.tsx";
-import { _token } from "../../Utils/Utils.tsx";
 import styles from "./product.module.css";
 
 interface ProductsTableProps {
@@ -119,7 +117,7 @@ const TableOfProducts: React.FC<ProductsTableProps> = ({
           </Table>
         </TableContainer>
       ) : (
-        <Typography>No Products Data</Typography>
+        <Typography sx={{ width:"20%", mb:"10px", textAlign:"center", m:"auto", color:"green"}}>No Products!</Typography>
       )}
     </>
   );

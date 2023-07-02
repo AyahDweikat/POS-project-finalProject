@@ -97,7 +97,7 @@ const TableOfCategories : React.FC<CategoriesTableProps> = ({handleDeleteCategor
         </Table>
       </TableContainer>
       : 
-      <Typography>No Categories Data</Typography>
+      <Typography sx={{ width:"20%", mb:"10px", textAlign:"center", m:"auto", color:"green"}}>No Categories!</Typography>
       }
     </>
   )
