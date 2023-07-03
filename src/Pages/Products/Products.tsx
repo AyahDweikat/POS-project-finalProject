@@ -1,6 +1,5 @@
 import { Button, Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import AddProductModal from "./AddProductModal.tsx";
 import { Cart, ProductObj } from "../../Utils/Types.tsx";
@@ -17,8 +16,6 @@ export interface ProductsProps {
 }
 
 const ProductsComponent = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [products, setProducts] = useState<ProductObj[]>([]);
   const [isOpenAddProductModal, setIsOpenAddProductModal] =
     useState<boolean>(false);
@@ -41,7 +38,6 @@ const ProductsComponent = () => {
       `https://posapp.onrender.com/product/deleteProduct/${idx}`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs") {
       getProducts(_token, setProducts);
       setSnackBarMsg("Product deleted Successfully");
