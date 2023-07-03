@@ -1,6 +1,5 @@
 import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
@@ -12,17 +11,20 @@ import styles from "./units.module.css";
 import { InputsObj, UnitObj } from "../../Utils/Types";
 import TableOfUnits from "./TableOfUnits";
 
+
 export default function Units() {
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [units, setUnits] = useState<UnitObj[]>([]);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [unitToUpdate, setUnitToUpdate] = useState<UnitObj>();
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [idToUpdate, setIdToUpdate] = useState<string>("");
 
   useEffect(() => {
-    getUnits(_token, setUnits);
+    try{
+      getUnits(_token, setUnits);
+    } catch(error){
+      console.error(error)
+    }
   }, []);
   const addUnitRow = async (valuesFromInputs: InputsObj) => {
     handleCloseForm();
@@ -32,7 +34,6 @@ export default function Units() {
       `https://posapp.onrender.com/unit/addUnit`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs") {
       getUnits(_token, setUnits);
       setSnackBarMsg("Unit Added Successfully");
@@ -58,7 +59,6 @@ export default function Units() {
       `https://posapp.onrender.com/unit/updateUnit/${idx}`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs updated") {
       getUnits(_token, setUnits);
       setSnackBarMsg("Unit updated Successfully");
@@ -66,13 +66,13 @@ export default function Units() {
       setSnackBarMsg(results.message);
     }
   };
+  
   const deleteUnitRow = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
       `https://posapp.onrender.com/unit/deleteUnit/${idx}`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs") {
       getUnits(_token, setUnits);
       setSnackBarMsg("Unit deleted Successfully");

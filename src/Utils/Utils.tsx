@@ -35,39 +35,51 @@ export const getCategories = async (
   _token: string,
   setCategories: (array: CategoryObj[]) => void
 ) => {
-  const results = await fetchApiWithAuthNoBody(
-    "GET",
-    `https://posapp.onrender.com/category/getCategories`,
-    `black__${_token}`
-  );
-  if (results.CategoryList) {
-    setCategories(sortFunctionByStrings(results.CategoryList));
+  try {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/category/getCategories`,
+      `black__${_token}`
+    );
+    if (results.CategoryList) {
+      setCategories(sortFunctionByStrings(results.CategoryList));
+    }
+  } catch(err){
+    throw new Error(`Error: ${err}`)
   }
 };
 export const getUnits = async (
   _token: string,
   setUnits: (arr: UnitObj[]) => void
 ) => {
-  const results = await fetchApiWithAuthNoBody(
-    "GET",
-    `https://posapp.onrender.com/unit/getUnits`,
-    `black__${_token}`
-  );
-  if (results.UnitList) {
-    setUnits(results.UnitList);
+  try {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/unit/getUnits`,
+      `black__${_token}`
+    );
+    if (results.UnitList) {
+      setUnits(results.UnitList);
+    }
+  } catch(err){
+    throw new Error(`Error: ${err}`)
   }
 };
 export const getProducts = async (
   _token: string,
   setProducts: (arr: ProductObj[]) => void
 ) => {
-  const results = await fetchApiWithAuthNoBody(
-    "GET",
-    `https://posapp.onrender.com/product/getProducts`,
-    `black__${_token}`
-  );
-  if (results.ProductList) {
-    setProducts(results.ProductList);
+  try {
+    const results = await fetchApiWithAuthNoBody(
+      "GET",
+      `https://posapp.onrender.com/product/getProducts`,
+      `black__${_token}`
+    )
+    if (results.ProductList) {
+      setProducts(results.ProductList);
+    }
+  } catch(err){
+    throw new Error(`Error: ${err}`)
   }
 };
 export const sortByPorductName = (isSortByName: boolean, products: ProductObj[]) => {

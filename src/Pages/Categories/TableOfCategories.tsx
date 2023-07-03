@@ -34,14 +34,14 @@ const TableOfCategories : React.FC<CategoriesTableProps> = ({handleDeleteCategor
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ backgroundColor: "#424242" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Number</TableCell>
+              <TableCell id={'categoryIndex'} sx={{ color: "white" }}>Number</TableCell>
               <TableCell sx={{ color: "white" }} align="center">
                 Category
               </TableCell>
-              <TableCell sx={{ color: "white" }} align="right">
+              <TableCell id={'deleteHeadCell'} sx={{ color: "white" }} align="right">
                 Delete
               </TableCell>
-              <TableCell sx={{ color: "white" }} align="right">
+              <TableCell id={'editHeadCell'} sx={{ color: "white" }} align="right">
                 Edit
               </TableCell>
             </TableRow>

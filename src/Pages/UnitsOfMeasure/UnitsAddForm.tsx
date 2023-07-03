@@ -23,6 +23,7 @@ const UnitsAddForm: React.FC<addUnitModalProps> = ({
   return (
     <Box
       className={styles.unitsPage}
+      id="unitsPage"
       sx={{
         left:{ xs: "2.5%", sm: "10%", md: "30%" },
         backgroundColor:"primary.light",

@@ -16,7 +16,7 @@ interface UnitsTableProps{
     handleChangeIdToUpdate : (idx:string)=>void;
     handleChangeUnitToUpdate : (obj:UnitObj)=>void; 
     setIsAddModalOpen : (state:boolean)=>void;
-    units:UnitObj[] ;
+    units:UnitObj[] |any[];
 }
 
 const TableOfUnits :React.FC<UnitsTableProps> = ({handleDeleteUnit, units, handleChangeUnitToUpdate, handleChangeIdToUpdate, setIsAddModalOpen})=> {
@@ -36,15 +36,15 @@ const TableOfUnits :React.FC<UnitsTableProps> = ({handleDeleteUnit, units, handl
             <TableRow>
               <TableCell sx={{ color: "white" }}>Unit of Measure</TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Base Unit of Measure
+                Base Unit
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
                 Conversion factor
               </TableCell>
-              <TableCell sx={{ color: "white" }} align="right">
+              <TableCell id={'deleteHeadCell'} sx={{ color: "white" }} align="right">
                 Delete
               </TableCell>
-              <TableCell sx={{ color: "white" }} align="right">
+              <TableCell id={'editHeadCell'} sx={{ color: "white" }} align="right">
                 Edit
               </TableCell>
             </TableRow>

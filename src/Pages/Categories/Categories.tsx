@@ -1,7 +1,6 @@
 import { Button, Box } from "@mui/material";
 import SnackbarComponent from "../../SubComponents/Snackbar.tsx";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchApiWithAuthAndBody,
   fetchApiWithAuthNoBody,
@@ -13,8 +12,6 @@ import styles from "./category.module.css";
 import TableOfCategories from "./TableOfCategories.tsx";
 
 export default function Categories() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [idToUpdate, setIdToUpdate] = useState<string>("");
@@ -31,7 +28,6 @@ export default function Categories() {
       `https://posapp.onrender.com/category/deleteCategory/${idx}`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs") {
       getCategories(_token, setCategories);
       setSnackBarMsg("Category deleted Successfully");
@@ -52,7 +48,6 @@ export default function Categories() {
         `https://posapp.onrender.com/category/addCategory`,
         `black__${_token}`
       );
-      navigate(location.pathname);
       if (results.message == "successs") {
         getCategories(_token, setCategories);
         setSnackBarMsg("Category Added Successfully");
@@ -70,7 +65,6 @@ export default function Categories() {
       `https://posapp.onrender.com/category/updateCategory/${idx}`,
       `black__${_token}`
     );
-    navigate(location.pathname);
     if (results.message == "successs updated") {
       getCategories(_token, setCategories);
       setSnackBarMsg("Category updated Successfully");
