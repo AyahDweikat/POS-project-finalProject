@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IconButton, Snackbar } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-// <SnackbarComponent snackBarMsg={snackBarMsg} />
 
 interface SnackbarProps {
   snackBarMsg?: string;
@@ -16,13 +15,7 @@ const SnackbarComponent: React.FC<SnackbarProps> = ({ snackBarMsg }) => {
   const handleShowSnackBar = () => {
     setOpen(true);
   };
-  const handleClose = (
-    // event: React.SyntheticEvent | Event,
-    // reason?: string
-  ) => {
-    // if (reason === "clickaway") {
-    //   return;
-    // }
+  const handleClose = () => {
     setOpen(false);
   };
   const action = (
