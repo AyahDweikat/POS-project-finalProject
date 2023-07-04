@@ -41,7 +41,7 @@ const TableOfProducts: React.FC<ProductsTableProps> = ({
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead sx={{ backgroundColor: "#424242" }}>
               <TableRow>
-                <TableCell sx={{ color: "white" }}>Product</TableCell>
+                <TableCell sx={{ color: "white" }}>Product Name</TableCell>
                 <TableCell sx={{ color: "white" }} align="center">
                   Code
                 </TableCell>
@@ -57,10 +57,10 @@ const TableOfProducts: React.FC<ProductsTableProps> = ({
                 <TableCell sx={{ color: "white" }} align="center">
                   Unit Measure
                 </TableCell>
-                <TableCell sx={{ color: "white" }} align="right">
+                <TableCell id={'deleteHeadCell'} sx={{ color: "white" }} align="right">
                   Delete
                 </TableCell>
-                <TableCell sx={{ color: "white" }} align="right">
+                <TableCell id={'editHeadCell'} sx={{ color: "white" }} align="right">
                   Edit
                 </TableCell>
               </TableRow>

@@ -27,16 +27,18 @@ const FilterComponent: React.FC<FilterProps> = ({filterValue, handleChangeFilter
     <FormControl sx={{ m: "10px", width: 300, backgroundColor: "white" }}>
       <InputLabel id="demo-multiple-name-label">Filter By Category</InputLabel>
       <Select
+        id={'filterByCategory'}
         value={filterValue}
+        inputProps={{ "data-testid": "content-input" }}
         onChange={(e: SelectChangeEvent) => handleChangeFilterValue(e.target.value)}
         input={<OutlinedInput label="Filter By Category" />}
         MenuProps={MenuProps}
       >
-        <MenuItem key={"dasjldsdfdsfsd"} value={""}>
+        <MenuItem key={"dasjldsdfdsfsd"} className={'selectOption'} value={""}>
           ...
         </MenuItem>
         {categories.map((category) => (
-          <MenuItem key={category._id} value={category.category}>
+          <MenuItem key={category._id} className={'selectOption'} value={category.category}>
             {category.category}
           </MenuItem>
         ))}

@@ -20,7 +20,11 @@ export default function Categories() {
 
 
   useEffect(() => {
-    getCategories(_token, setCategories);
+    try{
+      getCategories(_token, setCategories);
+    } catch(error){
+      console.error(error)
+    }
   }, []);
   const deleteCategory = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(

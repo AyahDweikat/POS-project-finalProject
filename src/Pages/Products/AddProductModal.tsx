@@ -141,6 +141,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
       <Box
         onClick={(e) => e.stopPropagation()}
         className={styles.addModal}
+        id={'productModal'}
         sx={{
           width: { xs: "100%", sm: "80%", md: "70%", lg: "60%" },
           backgroundColor: "primary.light",
@@ -282,6 +283,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
                 variant="outlined"
                 type="category"
                 name="productCategory"
+                inputProps={{ "data-testid": "content-input" }}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.productCategory}
@@ -369,6 +371,7 @@ const AddProductModal: React.FC<addProductModalProps> = ({
               </Typography>
 
               <Button
+              id={'submitBtn'}
                 type="submit"
                 sx={{
                   width: "80%",

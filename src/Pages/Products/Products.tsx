@@ -26,7 +26,11 @@ const ProductsComponent = () => {
   const [filterValue, setFilterValue] = useState<string>("");
   const [isSortByName, setIsSortByName] = useState<boolean>(false);
   useEffect(() => {
-    getProducts(_token, setProducts);
+    try{
+      getProducts(_token, setProducts);
+    } catch(error){
+      console.error(error)
+    }
   }, []);
   const displayedProducts = filterByCategory(
     filterValue,
