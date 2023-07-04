@@ -1,13 +1,19 @@
 import { describe, test, expect, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { beforeEach } from "vitest";
 import Products from "./Products";
 import FilterComponent from "./FilterComponent";
 import SearchForm from "./SearchForm";
 import AddProductModal from "./AddProductModal";
 import TableOfProducts from "./TableOfProducts";
+import * as fetchingFunctions from "../../Utils/Utils";
+
+
 describe("Products Page", () => {
+  const getProducts = vi.fn();
+
   beforeEach(() => {
+    vi.spyOn(fetchingFunctions ,"getProducts" ).mockImplementation(() => getProducts());
     render(<Products />);
   });
   
@@ -35,6 +41,7 @@ describe("Products Page", () => {
 describe('Filter Component',()=>{
   const handleChangeFilterValue = vi.fn()
   beforeEach(()=>{
+    // renderHook(useGetCategory);
     render(<FilterComponent filterValue="" handleChangeFilterValue={handleChangeFilterValue}/>)
   })
   test("filter by category input for product is found", () => {
@@ -65,11 +72,15 @@ describe('Search Form',()=>{
   })
 })
 describe("AddModal Component", () => {
+  const getCategories = vi.fn();
   const handleCloseForm = vi.fn();
   const setProducts = vi.fn();
 
+
+  
   let file:File;
   beforeEach(()=>{
+    vi.spyOn(fetchingFunctions ,"getCategories" ).mockImplementation(() => getCategories());
     file = new File(["(⌐□_□)"], "chucknorris.png", { type: "image/png" })
   })
   test("cancel button", async() => {
@@ -320,4 +331,3 @@ describe('Table of products', ()=>{
     expect(setIsOpenAddProductModal).toBeCalled()
   })
 })
-

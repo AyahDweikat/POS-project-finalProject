@@ -4,15 +4,14 @@ import Units from "./Units";
 import { beforeEach } from "vitest";
 import UnitsAddForm from "./UnitsAddForm";
 import TableOfUnits from "./TableOfUnits";
-// import { getUnits } from "../../Utils/Utils";
-// const token =
-//   "black__eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTBhOGI3OTBlZmUxYzAzOWUwZmIzNiIsImlhdCI6MTY4NzI1NzU5NywiZXhwIjoxNjg3MzQzOTk3fQ.Oiem-z2e6MJAfBlMCYHKmzQqE6pT_2dsDFIxgFqOx60";
+import * as fetchingFunctions from "../../Utils/Utils";
 
 describe("Unit Page", () => {
+  const getUnits = vi.fn()
   beforeEach(() => {
+    vi.spyOn(fetchingFunctions ,"getUnits" ).mockImplementation(() => getUnits());
     render(<Units />);
   });
-  
   test("No Units when no data", () => {
     const noUnitsText = screen.getByText(/no units/i);
     expect(noUnitsText).toBeInTheDocument();
