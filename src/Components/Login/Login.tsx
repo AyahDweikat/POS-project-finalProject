@@ -34,7 +34,7 @@ function Login() {
     <Box className={styles.loginPage}>
       <Box className={styles.loginCard} sx={{width: { xs: "95%", sm: "80%", md: "60%" }, maxWidth:"500px"}}>
       <Typography className={styles.loginTitle} variant="h6" component="h6" sx={{ pb: "10px" }}>
-        Login  
+        Login Page
       </Typography>
       <Formik
         initialValues={{ email: "", password: "" }}
