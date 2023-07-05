@@ -24,7 +24,7 @@ function Profile() {
       `https://posapp.onrender.com/user/getProfile`,
       `black__${_token}`
     );
-    if (results.message == "user profile") {
+    if (results?.message == "user profile") {
       setUserData(results.user);
     }
     return results;
@@ -53,6 +53,7 @@ function Profile() {
     <>
       <Box sx={{ position: "relative", width: "40%", margin: "auto" }}>
         <Avatar
+        id={'userImage'}
           alt={userData.userName}
           src={userData.profilePic}
           sx={{
@@ -65,6 +66,7 @@ function Profile() {
         />
         <label className={styles.customFileUpload}>
           <input
+          id={'imageInput'}
             className="inputFileUpload"
             type="file"
             name="image"
@@ -75,13 +77,13 @@ function Profile() {
         <Typography sx={{ textAlign: "left", ml: "50px", fontWeight:"600", fontSize:"16px", color:"secondary.main" }}>
           User Name:
         </Typography>
-        <Typography sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
+        <Typography id={'userName'} sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
           {userData.userName}
         </Typography>
         <Typography sx={{ textAlign: "left", ml: "50px", fontWeight:"600", fontSize:"16px", color:"secondary.main" }}>
           Email:
         </Typography>
-        <Typography sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
+        <Typography id={'email'} sx={{ textAlign: "left", ml: "50px", pb:"15px" }}>
           {userData.email}
         </Typography>
       </Box>
