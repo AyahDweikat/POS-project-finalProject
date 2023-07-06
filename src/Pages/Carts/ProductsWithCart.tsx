@@ -1,9 +1,9 @@
-import React, {useState}  from "react";
+import React, {useEffect, useState}  from "react";
 import Card from "@mui/material/Card";
 import { Box ,Button,Typography } from "@mui/material";
 import { Cart, Products, ProductObj } from "../../Utils/Types.tsx";
 import useGetProducts from "../../useHooks/useGetProducts.tsx";
-import { filterByCategory, searchResults, sortByPorductName } from "../../Utils/Utils.tsx";
+import { _token, filterByCategory, getProducts, searchResults, sortByPorductName } from "../../Utils/Utils.tsx";
 import SearchForm from "../Products/SearchForm.tsx";
 import FilterComponent from "../Products/FilterComponent.tsx";
 import styles from "./carts.module.css";
@@ -13,11 +13,17 @@ export interface ProductsProps {
   setCart: (cart: Cart) => void;
 }
 const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
-  const products = useGetProducts()
+  // const products = useGetProducts()
+  const [products, setProducts] = useState<ProductObj[]>([])
   const [searchValue, setSearchValue] = useState<string>("");
   const [filterValue, setFilterValue] = useState<string>("");
   const [isSortByName, setIsSortByName] = useState<boolean>(false);
   
+
+
+  useEffect(()=>{
+    getProducts(_token, setProducts)
+  }, [])
   const displayedProducts = filterByCategory(
     filterValue,
     searchResults(searchValue,  sortByPorductName(isSortByName, products))
@@ -68,7 +74,7 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
         </Button>
       </Box>
       <Box sx={{display: "flex"}}>
-      {displayedProducts.map((product) => {
+      {displayedProducts?.map((product) => {
         return (
           <Card
             key={product._id}
@@ -87,6 +93,7 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
             }
           >
             <Typography
+              data-testid='productName'
               sx={{
                 color: "primary.dark",
                 fontWeight: "400",
@@ -97,6 +104,7 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
               {product.productName}
             </Typography>
             <img
+              data-testid='productImage'
               src={product.productImg}
               alt={product.productName}
               height="90px"
@@ -104,6 +112,7 @@ const ProductswithCart: React.FC<ProductsProps> = ({ cart, setCart }) => {
             />
             <Box sx={{ display: "flex", justifyContent: "space-around" }}>
               <Typography
+                data-testid='productPrice'
                 variant="body1"
                 id="productPrice"
                 sx={{

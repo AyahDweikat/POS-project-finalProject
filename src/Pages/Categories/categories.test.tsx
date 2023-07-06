@@ -4,8 +4,6 @@ import Categories from "./Categories";
 import { beforeEach } from "vitest";
 import CategoryForm from "./CategoryForm";
 import TableOfCategories from "./TableOfCategories";
-// const token =
-//   "black__eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTBhOGI3OTBlZmUxYzAzOWUwZmIzNiIsImlhdCI6MTY4NzI1NzU5NywiZXhwIjoxNjg3MzQzOTk3fQ.Oiem-z2e6MJAfBlMCYHKmzQqE6pT_2dsDFIxgFqOx60";
 import * as fetchingFunctions from "../../Utils/Utils";
 
 describe("Categories Page", () => {

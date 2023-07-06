@@ -154,6 +154,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
                   </Typography>
                   <Typography
                     className={styles.deleteBtn}
+                    aria-label='deleteButton'
                     onClick={() => deleteProduct(product.productId)}
                   >
                     <DeleteForeverRoundedIcon sx={{ color: "error.light" }} />
@@ -193,6 +194,7 @@ const CartScreen: React.FC<CartScreenProps> = ({
             Total Price: {calculatePrice()} $
           </Typography>
           <Button
+            id={'checkoutBtn'}
             sx={{
               color: "secondary.main",
               border: "1px solid #7E9578",

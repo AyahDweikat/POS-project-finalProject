@@ -12,6 +12,7 @@ import * as fetchingFunctions from "../../Utils/Utils";
 describe("Products Page", () => {
   const getProducts = vi.fn();
 
+  
   beforeEach(() => {
     vi.spyOn(fetchingFunctions ,"getProducts" ).mockImplementation(() => getProducts());
     render(<Products />);

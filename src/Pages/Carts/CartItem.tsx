@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { Button, IconButton, CardHeader, Card } from "@mui/material";
+import { Button, IconButton, CardHeader, Card, Box } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { Cart } from "../../Utils/Types";
 // import styles from './carts.module.css';
@@ -18,7 +18,7 @@ const CartItem: React.FC<CartItemProps> = ({
   
   
   return (
-    <>
+    <Box id={'cartItem'}>
       <Card key={cart._id} sx={{ width:"200px", my:"10px"}}>
         <CardHeader
           action={
@@ -36,7 +36,7 @@ const CartItem: React.FC<CartItemProps> = ({
           Open Cart 
         </Button>
       </Card>
-    </>
+    </Box>
   );
 };
 
