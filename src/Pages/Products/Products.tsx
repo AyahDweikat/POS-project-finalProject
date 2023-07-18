@@ -9,6 +9,7 @@ import TableOfProducts from "./TableOfProducts.tsx";
 import FilterComponent from "./FilterComponent.tsx";
 import SearchForm from "./SearchForm.tsx";
 import styles from "./product.module.css";
+import TableComponent from './../../Components/TableComponent/TableComponent';
 
 export interface ProductsProps {
   cart: Cart | undefined;
@@ -16,6 +17,7 @@ export interface ProductsProps {
 }
 
 const ProductsComponent = () => {
+  const productObj ={_id:"", productName: '', productCode: '', productCategory: '', productImg: '', productPrice: 0, measureUnit: '',}
   const [products, setProducts] = useState<ProductObj[]>([]);
   const [isOpenAddProductModal, setIsOpenAddProductModal] =
     useState<boolean>(false);
@@ -93,12 +95,20 @@ const ProductsComponent = () => {
           handleCloseForm={handleCloseForm}
         />
       )}
-      <TableOfProducts
+      {/* <TableOfProducts
         displayedProducts={displayedProducts}
         handleDeleteProduct={deleteProduct}
         handleChangeIdToUpdate={setIdToUpdate}
         setIsOpenAddProductModal={setIsOpenAddProductModal}
         handleChangeProductToUpdate={setProductToUpdate}
+      /> */}
+      <TableComponent
+        obj={productObj}
+        displayedArray={displayedProducts}
+        handleDelete={deleteProduct}
+        handleChangeIdToUpdate={setIdToUpdate}
+        setIsOpenModal={setIsOpenAddProductModal}
+        handleChangeObjToUpdate={setProductToUpdate}
       />
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>

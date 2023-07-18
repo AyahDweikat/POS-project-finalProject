@@ -16,7 +16,19 @@ export const sortFunctionByStrings = (array: CategoryObj[]) => {
     return 0;
   });
 };
-
+export const sortFunctionByStringsssss = (array: CategoryObj[], key:keyof CategoryObj) => {
+  return array.sort((a: CategoryObj, b: CategoryObj) => {
+    const fa = a[key].toLowerCase(),
+      fb = b[key].toLowerCase();
+    if (fa < fb) {
+      return -1;
+    }
+    if (fa > fb) {
+      return 1;
+    }
+    return 0;
+  });
+};
 export const sortByName = (array: ProductObj[]) => {
   return array.sort((a: ProductObj, b: ProductObj) => {
     const fa = a.productName.toLowerCase(),

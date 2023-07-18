@@ -10,8 +10,10 @@ import CategoryForm from "./CategoryForm.tsx";
 import { _token, getCategories } from "../../Utils/Utils.tsx";
 import styles from "./category.module.css";
 import TableOfCategories from "./TableOfCategories.tsx";
+import TableComponent from "../../Components/TableComponent/TableComponent.tsx";
 
 export default function Categories() {
+  const categoryObj = {_id:"",category:"" }
   const [categories, setCategories] = useState<CategoryObj[]>([]);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [idToUpdate, setIdToUpdate] = useState<string>("");
@@ -106,13 +108,21 @@ export default function Categories() {
           />
         )}
       </Box>
-      <TableOfCategories 
+      {/* <TableOfCategories 
         handleDeleteCategory={deleteCategory}
         categories={categories}
         handleChangeCategoryToUpdate={setCategoryToUpdate}
         handleChangeIdToUpdate={setIdToUpdate}
         setIsAddModalOpen={setIsAddModalOpen} 
-        />
+        /> */}
+        <TableComponent
+        obj={categoryObj}
+        displayedArray={categories}
+        handleDelete={deleteCategory}
+        handleChangeIdToUpdate={setIdToUpdate}
+        handleChangeObjToUpdate={setCategoryToUpdate}
+        setIsOpenModal={setIsAddModalOpen}
+      />
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
   );

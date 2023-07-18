@@ -10,9 +10,11 @@ import { _token, getUnits } from "../../Utils/Utils";
 import styles from "./units.module.css";
 import { InputsObj, UnitObj } from "../../Utils/Types";
 import TableOfUnits from "./TableOfUnits";
+import TableComponent from "../../Components/TableComponent/TableComponent";
 
 
 export default function Units() {
+  const unitsObj = {_id:"", unitOfMeasure: '', baseUnit: '', conversionFactor: 0}
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [units, setUnits] = useState<UnitObj[]>([]);
   const [unitToUpdate, setUnitToUpdate] = useState<UnitObj>();
@@ -102,12 +104,20 @@ export default function Units() {
           />
         )}
       </Box>
-      <TableOfUnits
+      {/* <TableOfUnits
         handleDeleteUnit={deleteUnitRow}
         units={units}
         handleChangeUnitToUpdate={setUnitToUpdate}
         handleChangeIdToUpdate={setIdToUpdate}
         setIsAddModalOpen={setIsAddModalOpen}
+      /> */}
+      <TableComponent
+        obj={unitsObj}
+        displayedArray={units}
+        handleDelete={deleteUnitRow}
+        handleChangeIdToUpdate={setIdToUpdate}
+        setIsOpenModal={setIsAddModalOpen}
+        handleChangeObjToUpdate={setUnitToUpdate}
       />
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
