@@ -1,20 +1,14 @@
 import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  fetchApiWithAuthAndBody,
-  fetchApiWithAuthNoBody,
-} from "../../Utils/fetchApi";
+import TableCom from "../../Components/table/Table";
 import SnackbarComponent from "../../SubComponents/Snackbar";
-import UnitsAddForm from "./UnitsAddForm";
-import { _token, getUnits } from "../../Utils/Utils";
-import styles from "./units.module.css";
 import { InputsObj, UnitObj } from "../../Utils/Types";
-import TableOfUnits from "./TableOfUnits";
-import TableComponent from "../../Components/TableComponent/TableComponent";
-
+import { _token, getUnits } from "../../Utils/Utils";
+import { fetchApiWithAuthAndBody, fetchApiWithAuthNoBody } from "../../Utils/fetchApi";
+import UnitsAddForm from "./UnitsAddForm";
+import styles from "./units.module.css";
 
 export default function Units() {
-  const unitsObj = {_id:"", unitOfMeasure: '', baseUnit: '', conversionFactor: 0}
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [units, setUnits] = useState<UnitObj[]>([]);
   const [unitToUpdate, setUnitToUpdate] = useState<UnitObj>();
@@ -22,10 +16,10 @@ export default function Units() {
   const [idToUpdate, setIdToUpdate] = useState<string>("");
 
   useEffect(() => {
-    try{
+    try {
       getUnits(_token, setUnits);
-    } catch(error){
-      console.error(error)
+    } catch (error) {
+      console.error(error);
     }
   }, []);
   const addUnitRow = async (valuesFromInputs: InputsObj) => {
@@ -68,7 +62,7 @@ export default function Units() {
       setSnackBarMsg(results.message);
     }
   };
-  
+
   const deleteUnitRow = async (idx: string) => {
     const results = await fetchApiWithAuthNoBody(
       "DELETE",
@@ -104,20 +98,22 @@ export default function Units() {
           />
         )}
       </Box>
-      {/* <TableOfUnits
-        handleDeleteUnit={deleteUnitRow}
-        units={units}
-        handleChangeUnitToUpdate={setUnitToUpdate}
-        handleChangeIdToUpdate={setIdToUpdate}
-        setIsAddModalOpen={setIsAddModalOpen}
-      /> */}
-      <TableComponent
-        obj={unitsObj}
-        displayedArray={units}
-        handleDelete={deleteUnitRow}
-        handleChangeIdToUpdate={setIdToUpdate}
-        setIsOpenModal={setIsAddModalOpen}
-        handleChangeObjToUpdate={setUnitToUpdate}
+      <TableCom
+        data={units}
+        columns={[
+          /**
+           * @todo move to a constant file
+           */
+          { id: "_id", label: "Id", type: "text" },
+          { id: "unitOfMeasure", label: "Unit of Measure", type: "text" },
+          { id: "baseUnit", label: "Base Unit", type: "text" },
+          { id: "conversionFactor", label: "Conversion Factor", type: "text" },
+        ]}
+        onEdit={row => {
+          setIsAddModalOpen(true);
+          setUnitToUpdate(units.find(({ _id }) => _id === row._id));
+        }}
+        onDelete={row => deleteUnitRow(row._id)}
       />
       <SnackbarComponent snackBarMsg={snackBarMsg} />
     </>
